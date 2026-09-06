@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="th" data-theme="royal">
 <head>
@@ -661,15 +662,15 @@
           <!-- Sub-breakdown badges -->
           <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-800 grid grid-cols-3 gap-1 text-center">
             <div class="bg-blue-50 dark:bg-blue-900/30 p-1 rounded-md">
-              <span class="text-[10px] block text-blue-600 font-semibold"></span>
+              <span class="text-[10px] block text-blue-600 font-semibold">pH</span>
               <span id="statPhTestkit" class="text-xs font-bold text-slate-800 dark:text-slate-200">0</span>
             </div>
             <div class="bg-emerald-50 dark:bg-emerald-900/30 p-1 rounded-md">
-              <span class="text-[10px] block text-emerald-600 font-semibold"></span>
+              <span class="text-[10px] block text-emerald-600 font-semibold">NPK</span>
               <span id="statNpkTestkit" class="text-xs font-bold text-slate-800 dark:text-slate-200">0</span>
             </div>
             <div class="bg-amber-50 dark:bg-amber-900/30 p-1 rounded-md">
-              <span class="text-[10px] block text-amber-600 font-semibold"></span>
+              <span class="text-[10px] block text-amber-600 font-semibold">EC</span>
               <span id="statEcTestkit" class="text-xs font-bold text-slate-800 dark:text-slate-200">0</span>
             </div>
           </div>
@@ -694,15 +695,15 @@
           <!-- Sub-breakdown badges -->
           <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-800 grid grid-cols-3 gap-1 text-center">
             <div class="bg-blue-50 dark:bg-blue-900/30 p-1 rounded-md">
-              <span class="text-[10px] block text-blue-600 font-semibold"></span>
+              <span class="text-[10px] block text-blue-600 font-semibold">pH</span>
               <span id="statPhRefill" class="text-xs font-bold text-slate-800 dark:text-slate-200">0</span>
             </div>
             <div class="bg-emerald-50 dark:bg-emerald-900/30 p-1 rounded-md">
-              <span class="text-[10px] block text-emerald-600 font-semibold"></span>
+              <span class="text-[10px] block text-emerald-600 font-semibold">NPK</span>
               <span id="statNpkRefill" class="text-xs font-bold text-slate-800 dark:text-slate-200">0</span>
             </div>
             <div class="bg-amber-50 dark:bg-amber-900/30 p-1 rounded-md">
-              <span class="text-[10px] block text-amber-600 font-semibold"></span>
+              <span class="text-[10px] block text-amber-600 font-semibold">EC</span>
               <span id="statEcRefill" class="text-xs font-bold text-slate-800 dark:text-slate-200">0</span>
             </div>
           </div>
@@ -796,12 +797,12 @@
             <thead>
               <tr class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
                 <th class="py-2 px-3">ปีงบประมาณ</th>
-                <th class="py-2 px-2 text-right">pH Test</th>
-                <th class="py-2 px-2 text-right">NPK Test</th>
-                <th class="py-2 px-2 text-right">EC Test</th>
-                <th class="py-2 px-2 text-right">pH Refill</th>
-                <th class="py-2 px-2 text-right">NPK Refill</th>
-                <th class="py-2 px-2 text-right">EC Refill</th>
+                <th class="py-2 px-2 text-right"><span class="inline-block w-2 h-2 rounded-full bg-blue-600 mr-1 align-middle"></span>pH Test</th>
+                <th class="py-2 px-2 text-right"><span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1 align-middle"></span>NPK Test</th>
+                <th class="py-2 px-2 text-right"><span class="inline-block w-2 h-2 rounded-full bg-amber-500 mr-1 align-middle"></span>EC Test</th>
+                <th class="py-2 px-2 text-right"><span class="inline-block w-2 h-2 rounded-full bg-purple-500 mr-1 align-middle"></span>pH Refill</th>
+                <th class="py-2 px-2 text-right"><span class="inline-block w-2 h-2 rounded-full bg-rose-500 mr-1 align-middle"></span>NPK Refill</th>
+                <th class="py-2 px-2 text-right"><span class="inline-block w-2 h-2 rounded-full bg-cyan-500 mr-1 align-middle"></span>EC Refill</th>
                 <th class="py-2 px-3 text-right bg-blue-50/50 dark:bg-blue-900/20 font-bold">รวมชุดทั้งหมด</th>
                 <th class="py-2 px-3 text-right bg-emerald-50/50 dark:bg-emerald-900/20 font-bold text-emerald-700 dark:text-emerald-300">จำนวนตัวอย่างที่วิเคราะห์ได้</th>
                 <th class="py-2 px-3 text-right">สัดส่วน / แนวโน้ม</th>
@@ -1040,9 +1041,9 @@
                 <th class="p-3 text-center bg-blue-50 dark:bg-blue-900/20 whitespace-nowrap min-w-[85px]">pH Test<br><span class="text-[9px] font-normal text-blue-500">×80</span></th>
                 <th class="p-3 text-center bg-emerald-50 dark:bg-emerald-900/20 whitespace-nowrap min-w-[85px]">NPK Test<br><span class="text-[9px] font-normal text-emerald-500">×50</span></th>
                 <th class="p-3 text-center bg-amber-50 dark:bg-amber-900/20 whitespace-nowrap min-w-[85px]">EC Test<br><span class="text-[9px] font-normal text-amber-500">×30</span></th>
-                <th class="p-3 text-center bg-indigo-50 dark:bg-indigo-900/20 whitespace-nowrap min-w-[85px]">pH Refill<br><span class="text-[9px] font-normal text-indigo-500">×80</span></th>
-                <th class="p-3 text-center bg-teal-50 dark:bg-teal-900/20 whitespace-nowrap min-w-[85px]">NPK Refill<br><span class="text-[9px] font-normal text-teal-500">×50</span></th>
-                <th class="p-3 text-center bg-yellow-50 dark:bg-yellow-900/20 whitespace-nowrap min-w-[85px]">EC Refill<br><span class="text-[9px] font-normal text-yellow-500">×30</span></th>
+                <th class="p-3 text-center bg-purple-50 dark:bg-purple-900/20 whitespace-nowrap min-w-[85px]">pH Refill<br><span class="text-[9px] font-normal text-purple-500">×80</span></th>
+                <th class="p-3 text-center bg-rose-50 dark:bg-rose-900/20 whitespace-nowrap min-w-[85px]">NPK Refill<br><span class="text-[9px] font-normal text-rose-500">×50</span></th>
+                <th class="p-3 text-center bg-cyan-50 dark:bg-cyan-900/20 whitespace-nowrap min-w-[85px]">EC Refill<br><span class="text-[9px] font-normal text-cyan-500">×30</span></th>
                 <th class="p-3 text-right font-bold whitespace-nowrap min-w-[105px]">รวมชุด (กล่อง)</th>
                 <th class="p-3 text-right font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20 whitespace-nowrap min-w-[160px]">จำนวนตัวอย่างที่วิเคราะห์ได้ (ตัวอย่าง)</th>
                 <th class="p-3 text-center whitespace-nowrap min-w-[80px]">จัดการ</th>
@@ -2366,12 +2367,12 @@
           data: {
             labels: sortedYears.map(y => `ปี ${y}`),
             datasets: [
-              { label: 'pH Test', data: dsPhTest, backgroundColor: '#3b82f6', borderRadius: 4 },
+              { label: 'pH Test', data: dsPhTest, backgroundColor: '#2563eb', borderRadius: 4 },
               { label: 'NPK Test', data: dsNpkTest, backgroundColor: '#10b981', borderRadius: 4 },
               { label: 'EC Test', data: dsEcTest, backgroundColor: '#f59e0b', borderRadius: 4 },
-              { label: 'pH Refill', data: dsPhRef, backgroundColor: '#6366f1', borderRadius: 4 },
-              { label: 'NPK Refill', data: dsNpkRef, backgroundColor: '#14b8a6', borderRadius: 4 },
-              { label: 'EC Refill', data: dsEcRef, backgroundColor: '#eab308', borderRadius: 4 }
+              { label: 'pH Refill', data: dsPhRef, backgroundColor: '#8b5cf6', borderRadius: 4 },
+              { label: 'NPK Refill', data: dsNpkRef, backgroundColor: '#f43f5e', borderRadius: 4 },
+              { label: 'EC Refill', data: dsEcRef, backgroundColor: '#06b6d4', borderRadius: 4 }
             ]
           },
           options: {
@@ -2672,7 +2673,7 @@
           ],
           datasets: [{
             data: [valPhR, valNpkR, valEcR],
-            backgroundColor: ['#6366f1', '#14b8a6', '#eab308'],
+            backgroundColor: ['#8b5cf6', '#f43f5e', '#06b6d4'],
             borderWidth: 2,
             hoverOffset: 6
           }]
@@ -2695,15 +2696,15 @@
       const totalR = valPhR + valNpkR + valEcR || 1;
       document.getElementById("refillLegend").innerHTML = `
         <div class="flex items-center justify-between">
-          <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span> pH Refill ${isSamples ? '<span class="text-[10px] text-indigo-500">(×80)</span>' : ''}</span>
+          <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span> pH Refill ${isSamples ? '<span class="text-[10px] text-purple-500">(×80)</span>' : ''}</span>
           <span class="font-bold">${formatNumber(valPhR)} <span class="text-[10px] text-slate-400">(${((valPhR/totalR)*100).toFixed(1)}%)</span></span>
         </div>
         <div class="flex items-center justify-between">
-          <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-teal-500"></span> NPK Refill ${isSamples ? '<span class="text-[10px] text-teal-500">(×50)</span>' : ''}</span>
+          <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> NPK Refill ${isSamples ? '<span class="text-[10px] text-rose-500">(×50)</span>' : ''}</span>
           <span class="font-bold">${formatNumber(valNpkR)} <span class="text-[10px] text-slate-400">(${((valNpkR/totalR)*100).toFixed(1)}%)</span></span>
         </div>
         <div class="flex items-center justify-between">
-          <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-yellow-500"></span> EC Refill ${isSamples ? '<span class="text-[10px] text-yellow-500">(×30)</span>' : ''}</span>
+          <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span> EC Refill ${isSamples ? '<span class="text-[10px] text-cyan-500">(×30)</span>' : ''}</span>
           <span class="font-bold">${formatNumber(valEcR)} <span class="text-[10px] text-slate-400">(${((valEcR/totalR)*100).toFixed(1)}%)</span></span>
         </div>
       `;
@@ -2998,9 +2999,9 @@
             <td class="p-3 text-center bg-blue-50/50 dark:bg-blue-900/10 font-mono font-medium whitespace-nowrap">${formatNumber(row.ph_testkit)}</td>
             <td class="p-3 text-center bg-emerald-50/50 dark:bg-emerald-900/10 font-mono font-medium whitespace-nowrap">${formatNumber(row.npk_testkit)}</td>
             <td class="p-3 text-center bg-amber-50/50 dark:bg-amber-900/10 font-mono font-medium whitespace-nowrap">${formatNumber(row.ec_testkit)}</td>
-            <td class="p-3 text-center bg-indigo-50/50 dark:bg-indigo-900/10 font-mono font-medium whitespace-nowrap">${formatNumber(row.ph_refill)}</td>
-            <td class="p-3 text-center bg-teal-50/50 dark:bg-teal-900/10 font-mono font-medium whitespace-nowrap">${formatNumber(row.npk_refill)}</td>
-            <td class="p-3 text-center bg-yellow-50/50 dark:bg-yellow-900/10 font-mono font-medium whitespace-nowrap">${formatNumber(row.ec_refill)}</td>
+            <td class="p-3 text-center bg-purple-50/50 dark:bg-purple-900/10 font-mono font-medium whitespace-nowrap">${formatNumber(row.ph_refill)}</td>
+            <td class="p-3 text-center bg-rose-50/50 dark:bg-rose-900/10 font-mono font-medium whitespace-nowrap">${formatNumber(row.npk_refill)}</td>
+            <td class="p-3 text-center bg-cyan-50/50 dark:bg-cyan-900/10 font-mono font-medium whitespace-nowrap">${formatNumber(row.ec_refill)}</td>
             <td class="p-3 text-right font-bold text-slate-800 dark:text-slate-100 whitespace-nowrap">${formatNumber(grandTot)}</td>
             <td class="p-3 text-right font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/20 whitespace-nowrap">${formatNumber(soilSamples)}</td>
             <td class="p-3 text-center whitespace-nowrap">
@@ -4266,8 +4267,8 @@
       // -------------------------------------------------------------
       // MODE 2: FULL MULTI-PAGE REPORT (PAGINATED WITH ZERO OVERFLOW)
       // Page 1: Executive Summary (Tables 1 & 2)
-      // Page 2: Project Summary (Table 4) - Guaranteed ~380px height (No overflow)
-      // Page 3+: Provincial Details (Table 3) - Sliced cleanly at 24 rows/page
+      // Pages 2 to (totalPages - 1): Provincial Details (Table 3) - Sliced cleanly at 24 rows/page
+      // Final Page (totalPages): Project Summary (Table 4) - Dedicated sheet with zero overflow
       // -------------------------------------------------------------
       const detailChunks = chunkDetailRows(detailRows, 24);
       const totalPages = 2 + Math.max(detailChunks.length, 1);
@@ -4280,60 +4281,17 @@
             ${kpiSummaryTable}
             ${table1Year}
             ${table2Region}
-            <div class="p-1 bg-slate-50 border border-slate-300 rounded text-center text-[8px] text-slate-600">
-              <i class="fa-solid fa-file-lines text-rose-500 mr-1"></i>
-              <b>ตารางที่ 4: สรุปภาพรวมรายโครงการ</b> แสดงในหน้า 2 | <b>ตารางที่ 3: สรุปรายละเอียดรายจังหวัด (${formatNumber(detailRows.length)} รายการ)</b> แสดงต่อเนื่องในหน้า 3 ถึงหน้า ${totalPages}
-            </div>
           </div>
           <div>
             ${signatureBlock}
             ${getFooterHtml(1, totalPages)}
           </div>
         </div>
-
-        <!-- SHEET 2: PROJECT SUMMARY (TABLE 4) - DEDICATED SHEET ZERO OVERFLOW -->
-        <div class="a4-sheet">
-          <div class="space-y-2">
-            <!-- Mini Header for Project Summary Sheet -->
-            <div class="pb-1 border-b border-slate-300 flex items-center justify-between text-xs">
-              <div>
-                <span class="font-bold text-slate-900 text-[10px]">สำนักวิทยาศาสตร์เพื่อการพัฒนาที่ดิน</span>
-                <span class="text-slate-500 text-[9px] ml-1.5">• รายงานสรุปผลการจัดสรรชุดตรวจสอบดินและจำนวนตัวอย่างที่วิเคราะห์ได้รายโครงการ</span>
-              </div>
-              <div class="text-[8px] text-slate-500">วันที่พิมพ์: ${thaiDateStr}</div>
-            </div>
-
-            ${table4Project}
-
-            <!-- Executive Project Insights Card -->
-            <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-[8px] space-y-1">
-              <div class="font-bold text-slate-900 flex items-center gap-1.5 text-[8.5px]">
-                <i class="fa-solid fa-lightbulb text-amber-500"></i> ข้อสังเกตและสาระสำคัญเชิงบริหาร (Executive Project Insights)
-              </div>
-              <p class="text-slate-600 leading-relaxed">
-                การจัดสรรชุดตรวจสอบดินและชุดน้ำยาเติมกระจายตัวใน ${projectReportRows.length} แผนงาน/โครงการหลักทั่วประเทศ 
-                โดยโครงการที่ได้รับการจัดสรรชุดตรวจสูงสุดคือ <b>"${escapeHtml(projectReportRows[0] ? projectReportRows[0].project : '-')}"</b> 
-                คิดเป็นสัดส่วน <b>${grandTotalKits > 0 && projectReportRows[0] ? ((projectReportRows[0].kits / grandTotalKits) * 100).toFixed(1) : '0.0'}%</b> ของยอดจัดสรรทั้งหมด 
-                และสามารถให้บริการวิเคราะห์ตัวอย่างดินให้แก่เกษตรกรได้จริง <b>${formatNumber(grandTotalSamples)}</b> ตัวอย่าง
-              </p>
-            </div>
-
-            <div class="p-1 bg-indigo-50/50 border border-indigo-200 rounded text-center text-[8px] text-indigo-800">
-              <i class="fa-solid fa-list-check text-indigo-600 mr-1"></i>
-              <b>ตารางที่ 3: สรุปรายละเอียดการจัดสรรชุดตรวจสอบดินรายจังหวัดและสถานีพัฒนาที่ดิน (${formatNumber(detailRows.length)} รายการ)</b> แสดงต่อเนื่องในหน้า 3 ถึงหน้า ${totalPages}
-            </div>
-          </div>
-
-          <div>
-            ${signatureBlock}
-            ${getFooterHtml(2, totalPages)}
-          </div>
-        </div>
       `;
 
       if (detailChunks.length === 0) {
         html += `
-          <!-- SHEET 3: EMPTY DETAIL -->
+          <!-- SHEET 2: EMPTY DETAIL (TABLE 3) -->
           <div class="a4-sheet">
             <div class="space-y-3">
               <div class="pb-1 border-b border-slate-300 flex items-center justify-between text-xs">
@@ -4347,13 +4305,13 @@
             </div>
             <div>
               ${signatureBlock}
-              ${getFooterHtml(3, totalPages)}
+              ${getFooterHtml(2, totalPages)}
             </div>
           </div>
         `;
       } else {
         detailChunks.forEach((chunk, cIdx) => {
-          const pageNum = cIdx + 3;
+          const pageNum = cIdx + 2;
           const isLastChunk = chunk.isLast;
 
           html += `
@@ -4457,6 +4415,30 @@
           `;
         });
       }
+
+      // FINAL SHEET: PROJECT SUMMARY (TABLE 4) - PLACED AFTER TABLE 3
+      html += `
+        <!-- FINAL SHEET: PROJECT SUMMARY (TABLE 4) -->
+        <div class="a4-sheet">
+          <div class="space-y-2">
+            <!-- Mini Header for Project Summary Sheet -->
+            <div class="pb-1 border-b border-slate-300 flex items-center justify-between text-xs">
+              <div>
+                <span class="font-bold text-slate-900 text-[10px]">สำนักวิทยาศาสตร์เพื่อการพัฒนาที่ดิน</span>
+                <span class="text-slate-500 text-[9px] ml-1.5">• รายงานสรุปผลการจัดสรรชุดตรวจสอบดินและจำนวนตัวอย่างที่วิเคราะห์ได้รายโครงการ</span>
+              </div>
+              <div class="text-[8px] text-slate-500">วันที่พิมพ์: ${thaiDateStr}</div>
+            </div>
+
+            ${table4Project}
+          </div>
+
+          <div>
+            ${signatureBlock}
+            ${getFooterHtml(totalPages, totalPages)}
+          </div>
+        </div>
+      `;
 
       container.innerHTML = html;
     }
