@@ -1007,14 +1007,14 @@
             <div>
               <h3 id="chartTopTitle" class="text-sm font-bold flex items-center gap-2">
                 <i class="fa-solid fa-trophy text-amber-500"></i>
-                10 อันดับจังหวัดที่ได้รับการจัดสรรสูงสุด (Top 10 Provinces)
+                อันดับจังหวัดที่ได้รับการจัดสรรสูงสุด
               </h3>
               <p id="chartTopSubtitle" class="text-xs" style="color: var(--text-muted);">
                 จัดอันดับตามยอดรวมการแจกจ่ายชุดตรวจและชุดเติมทุกประเภท
               </p>
             </div>
           </div>
-          <div class="relative h-72 sm:h-80 w-full">
+          <div class="relative h-80 sm:h-96 w-full">
             <canvas id="chartTopProvinces"></canvas>
           </div>
         </div>
@@ -1898,7 +1898,7 @@
         : "เปรียบเทียบระหว่างชุดตรวจสอบดิน (Testkits) และชุดน้ำยาเติม (Refills) ในแต่ละเขต";
 
       document.getElementById("chartTopTitle").innerHTML = `<i class="fa-solid fa-trophy text-amber-500"></i> ` + 
-        (isSamples ? "10 อันดับจังหวัดที่มีจำนวนตัวอย่างที่สามารถวิเคราะห์ได้สูงสุด" : "10 อันดับจังหวัดที่ได้รับการจัดสรรสูงสุด (Top 10 Provinces)");
+        (isSamples ? "อันดับจังหวัดที่มีจำนวนตัวอย่างที่สามารถวิเคราะห์ได้สูงสุด" : "อันดับจังหวัดที่ได้รับการจัดสรรสูงสุด");
       document.getElementById("chartTopSubtitle").innerText = isSamples 
         ? "จัดอันดับตามจำนวนตัวอย่างดินที่สามารถให้บริการตรวจวิเคราะห์ได้จริง (ตัวอย่าง)" 
         : "จัดอันดับตามยอดรวมการแจกจ่ายชุดตรวจและชุดเติมทุกประเภท";
@@ -3105,7 +3105,7 @@
         </div>
       `;
 
-      // Chart 4: Top 10 Provinces Horizontal Bar
+      // Chart 4: Top Provinces Horizontal Bar (Top 13)
       const provTotals = {};
       filteredData.forEach(d => {
         const prov = d.province || "ไม่ระบุจังหวัด";
@@ -3115,7 +3115,7 @@
 
       const sortedProv = Object.entries(provTotals)
         .sort((a, b) => b[1] - a[1])
-        .slice(0, 10);
+        .slice(0, 13);
 
       const topProvLabels = sortedProv.map(item => item[0]);
       const topProvValues = sortedProv.map(item => item[1]);
