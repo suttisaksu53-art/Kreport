@@ -106,6 +106,10 @@
       --badge-text: #334155;
     }
 
+    html, body {
+      overflow-x: clip;
+    }
+
     body {
       background-color: var(--bg-main);
       color: var(--text-main);
@@ -138,15 +142,21 @@
     .sticky-filter-bar {
       position: -webkit-sticky;
       position: sticky;
-      top: 86px;
+      top: 108px;
       z-index: 30;
+      background-color: var(--bg-card);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
+      transition: box-shadow 0.25s ease, border-color 0.25s ease, padding 0.25s ease;
     }
-    @media (min-width: 640px) {
+    @media (min-width: 1024px) {
       .sticky-filter-bar {
-        top: 92px;
+        top: 68px;
       }
+    }
+    .sticky-filter-bar.is-floating {
+      box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.16), 0 4px 10px -2px rgba(15, 23, 42, 0.08);
+      border-color: rgba(245, 158, 11, 0.4) !important;
     }
 
     /* ========================================================================= */
@@ -347,9 +357,86 @@
         break-after: auto !important;
       }
     }
+
+    /* ========================================================================= */
+    /* EXECUTIVE SECURITY & ANTI-COPY PROTECTION STYLES */
+    /* ========================================================================= */
+    body {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    input, textarea, select, .selectable-text {
+      -webkit-user-select: text !important;
+      -moz-user-select: text !important;
+      -ms-user-select: text !important;
+      user-select: text !important;
+    }
+    #securityShieldOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      background: rgba(15, 23, 42, 0.96);
+      backdrop-filter: blur(12px);
+      color: #ffffff;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+    }
+    #securityShieldOverlay.active {
+      display: flex !important;
+    }
+    #securityToast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      z-index: 9999999;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 0;
+      pointer-events: none;
+    }
+    #securityToast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased">
+
+  <!-- EXECUTIVE SECURITY SHIELD (Displayed if DevTools is Opened) -->
+  <div id="securityShieldOverlay">
+    <div class="max-w-md w-full p-6 sm:p-8 rounded-2xl bg-slate-900/95 border border-red-500/50 shadow-2xl text-center space-y-4">
+      <div class="w-16 h-16 mx-auto rounded-2xl bg-red-500/20 border border-red-500/40 text-red-400 flex items-center justify-center text-3xl shadow-lg animate-pulse">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold text-white tracking-tight">ระบบความปลอดภัยตรวจพบการเข้าถึง</h2>
+        <p class="text-[11px] text-red-400 font-semibold uppercase tracking-wider mt-1">Security & Intellectual Property Protection</p>
+      </div>
+      <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+        ระบบรายงานข้อมูลชุดตรวจดิน (ReportTestKit) ปิดกั้นการเปิดใช้งาน Developer Tools เพื่อปกป้องความปลอดภัยของข้อมูลราชการและทรัพย์สินทางปัญญา
+      </p>
+      <div class="pt-2 text-xs text-slate-400 border-t border-slate-800">
+        กรุณาปิดหน้าต่าง Developer Tools เพื่อกลับเข้าสู่หน้าแดชบอร์ดตามปกติ
+      </div>
+    </div>
+  </div>
+
+  <!-- SECURITY TOAST NOTIFICATION -->
+  <div id="securityToast" class="bg-slate-900/95 text-white border border-red-500/50 shadow-2xl rounded-xl px-4 py-2.5 flex items-center gap-3 backdrop-blur-md">
+    <div class="w-7 h-7 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center text-sm shrink-0">
+      <i class="fa-solid fa-lock"></i>
+    </div>
+    <div class="text-xs font-semibold text-slate-100" id="securityToastText">
+      ไม่อนุญาตให้เปิด Developer Tools หรือคัดลอกซอร์สโค้ด
+    </div>
+  </div>
 
   <!-- Hidden File Input for Excel Import -->
   <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" onchange="handleExcelFileUpload(event)" class="hidden">
@@ -357,100 +444,126 @@
   <!-- ========================================================================= -->
   <!-- TOP HEADER / EXECUTIVE NAVBAR -->
   <!-- ========================================================================= -->
-  <header style="background: var(--bg-header);" class="text-white sticky top-0 z-40 shadow-xl">
+  <header style="background: var(--bg-header);" class="text-white sticky top-0 z-40 shadow-xl border-b border-white/10 backdrop-blur-md">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-14 sm:h-16">
+      <div class="flex items-center justify-between h-16 sm:h-[68px] gap-2">
         
         <!-- Left: Branding & Organization -->
-        <div class="flex items-center space-x-2.5 sm:space-x-3.5">
-          <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-amber-400/25 via-white/10 to-blue-500/20 backdrop-blur-md border border-amber-300/30 flex items-center justify-center shadow-md shadow-black/15 text-amber-300 text-base sm:text-lg font-bold">
-            <i class="fa-solid fa-flask-vial"></i>
+        <div class="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1 mr-1 sm:mr-2">
+          <!-- Emblem / Logo -->
+          <div class="relative flex-shrink-0 group">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-gradient-to-br from-amber-400/25 via-white/10 to-blue-500/20 backdrop-blur-md border border-amber-300/40 flex items-center justify-center shadow-lg shadow-black/20 text-amber-300 text-base sm:text-xl transition-all duration-300 group-hover:scale-105 group-hover:border-amber-300/70">
+              <i class="fa-solid fa-flask-vial"></i>
+            </div>
+            <span class="absolute -top-0.5 -right-0.5 w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-amber-400 shadow-sm shadow-amber-300/80 ring-2 ring-slate-900/50"></span>
           </div>
-          <div>
-            <div class="flex items-center space-x-1.5">
-              <span class="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-medium px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-400/20 via-amber-300/10 to-transparent border border-amber-300/35 text-amber-200 shadow-sm">
-                <i class="fa-solid fa-microscope text-amber-300 text-[9px]"></i>
-                <span class="tracking-wide font-medium">สำนักวิทยาศาสตร์เพื่อการพัฒนาที่ดิน</span>
+
+          <!-- Titles Group -->
+          <div class="flex flex-col justify-center min-w-0">
+            <div class="flex items-center gap-1.5 sm:gap-2">
+              <h1 class="text-sm sm:text-lg font-bold tracking-tight text-white leading-tight truncate">
+                ReportTestKit
+              </h1>
+              <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[9.5px] font-semibold tracking-wider uppercase bg-gradient-to-r from-amber-400/25 via-amber-300/15 to-transparent border border-amber-300/40 text-amber-200 shadow-sm flex-shrink-0">
+                Executive EIS
               </span>
             </div>
-            <h1 class="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-2">
-              <span>ReportTestKit</span>
-              <span class="text-[9px] sm:text-[10px] font-semibold tracking-wider uppercase px-2 py-0.2 rounded-full bg-white/15 border border-white/25 text-white/90 shadow-sm">Executive EIS</span>
-				
-			</h1>
+            <div class="flex items-center gap-1 sm:gap-1.5 text-[10.5px] sm:text-xs text-white/85 font-normal tracking-wide mt-0.5 whitespace-nowrap">
+              <i class="fa-solid fa-microscope text-amber-300/80 text-[9px] sm:text-[10px] flex-shrink-0"></i>
+              <span>สำนักวิทยาศาสตร์เพื่อการพัฒนาที่ดิน</span>
+            </div>
           </div>
         </div>
 
+        <!-- Center: Navigation Tabs (Desktop lg+) -->
+        <nav class="hidden lg:flex items-center p-1 rounded-2xl bg-slate-900/35 backdrop-blur-md border border-white/10 shadow-inner flex-shrink-0">
+          <button onclick="switchTab('dashboard')" id="tabBtnDashboard" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-2 transition duration-200 bg-white/20 text-white shadow-sm border border-white/15 cursor-pointer">
+            <i class="fa-solid fa-chart-pie text-amber-300"></i>
+            <span>แดชบอร์ดสรุปผู้บริหาร</span>
+          </button>
+          <button onclick="switchTab('table')" id="tabBtnTable" class="px-3.5 py-1.5 rounded-xl text-xs font-medium flex items-center gap-2 transition duration-200 text-white/70 hover:text-white hover:bg-white/10 cursor-pointer">
+            <i class="fa-solid fa-table-list text-slate-300"></i>
+            <span>สำรวจและจัดการข้อมูล</span>
+          </button>
+        </nav>
+
         <!-- Right: Actions, Admin Theme Picker & Auth -->
-        <div class="flex items-center space-x-1.5 sm:space-x-2.5">
+        <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
           
-          <!-- Connection Status Pill (Clean Minimal) -->
-          <div id="connStatusBadge" class="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-amber-500/20 border border-amber-400/30 text-amber-300 text-[11px] font-medium">
-            <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+          <!-- Connection Status Pill -->
+          <div id="connStatusBadge" class="hidden sm:flex items-center space-x-2 h-9 px-3 rounded-xl bg-slate-900/35 backdrop-blur-md border border-amber-400/30 text-amber-300 text-xs font-medium shadow-sm transition">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-400"></span>
+            </span>
             <span>กำลังเชื่อมต่อฐานข้อมูล...</span>
           </div>
 
           <!-- Theme Selector Dropdown (ADMIN ONLY) -->
           <div id="adminThemeContainer" class="relative hidden">
-            <button id="themeDropdownBtn" type="button" onclick="toggleThemeDropdown(event)" class="flex items-center space-x-1.5 bg-amber-400/20 hover:bg-amber-400/30 border border-amber-300/40 text-amber-300 px-2.5 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer">
+            <button id="themeDropdownBtn" type="button" onclick="toggleThemeDropdown(event)" class="h-9 flex items-center space-x-1.5 bg-amber-400/15 hover:bg-amber-400/25 border border-amber-300/40 text-amber-300 px-3 rounded-xl text-xs font-medium transition cursor-pointer shadow-sm">
               <i class="fa-solid fa-palette text-amber-300"></i>
-              <span class="hidden md:inline" id="currentThemeName">ธีม: น้ำเงินทอง (ราชการ)</span>
-              <span class="text-[9px] px-1 py-0.2 rounded bg-amber-400 text-slate-900 font-bold uppercase ml-1">Admin</span>
-              <i class="fa-solid fa-chevron-down text-[10px] opacity-75"></i>
+              <span class="hidden xl:inline" id="currentThemeName">ธีม: น้ำเงินทอง (ราชการ)</span>
+              <span class="text-[9px] px-1.5 py-0.5 rounded-md bg-amber-400 text-slate-900 font-bold uppercase">Admin</span>
+              <i class="fa-solid fa-chevron-down text-[10px] opacity-75 ml-0.5"></i>
             </button>
-            <div id="themeDropdownMenu" class="absolute right-0 top-full mt-1.5 w-60 bg-white rounded-xl shadow-2xl border border-slate-200 py-2 hidden z-50 text-slate-800 animate-in fade-in slide-in-from-top-1 duration-150">
-              <div class="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 flex items-center justify-between">
+            <div id="themeDropdownMenu" class="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-200 py-2 hidden z-50 text-slate-800 animate-in fade-in slide-in-from-top-1 duration-150">
+              <div class="px-3.5 py-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 flex items-center justify-between">
                 <span>เปลี่ยนธีมระบบ (ส่วนกลาง)</span>
                 <i class="fa-solid fa-crown text-amber-500 text-xs"></i>
               </div>
-              <button type="button" onclick="changeThemeAsAdmin('royal')" class="w-full text-left px-4 py-2.5 text-xs hover:bg-slate-50 flex items-center space-x-2 transition">
-                <span class="w-3 h-3 rounded-full bg-blue-900 border border-amber-400"></span>
+              <button type="button" onclick="changeThemeAsAdmin('royal')" class="w-full text-left px-4 py-2.5 text-xs hover:bg-slate-50 flex items-center space-x-2.5 transition">
+                <span class="w-3.5 h-3.5 rounded-full bg-blue-900 border border-amber-400 shadow-sm"></span>
                 <span class="font-medium text-slate-700">Royal Navy & Gold (ทางการ)</span>
               </button>
-              <button type="button" onclick="changeThemeAsAdmin('emerald')" class="w-full text-left px-4 py-2.5 text-xs hover:bg-slate-50 flex items-center space-x-2 transition">
-                <span class="w-3 h-3 rounded-full bg-emerald-700 border border-emerald-400"></span>
+              <button type="button" onclick="changeThemeAsAdmin('emerald')" class="w-full text-left px-4 py-2.5 text-xs hover:bg-slate-50 flex items-center space-x-2.5 transition">
+                <span class="w-3.5 h-3.5 rounded-full bg-emerald-700 border border-emerald-400 shadow-sm"></span>
                 <span class="font-medium text-slate-700">Emerald Land (เกษตรกรรม)</span>
               </button>
-              <button type="button" onclick="changeThemeAsAdmin('midnight')" class="w-full text-left px-4 py-2.5 text-xs hover:bg-slate-50 flex items-center space-x-2 transition">
-                <span class="w-3 h-3 rounded-full bg-slate-900 border border-sky-400"></span>
+              <button type="button" onclick="changeThemeAsAdmin('midnight')" class="w-full text-left px-4 py-2.5 text-xs hover:bg-slate-50 flex items-center space-x-2.5 transition">
+                <span class="w-3.5 h-3.5 rounded-full bg-slate-900 border border-sky-400 shadow-sm"></span>
                 <span class="font-medium text-slate-700">Midnight Slate (ดาร์กโหมด)</span>
               </button>
-              <button type="button" onclick="changeThemeAsAdmin('clean')" class="w-full text-left px-4 py-2.5 text-xs hover:bg-slate-50 flex items-center space-x-2 transition">
-                <span class="w-3 h-3 rounded-full bg-slate-200 border border-slate-400"></span>
+              <button type="button" onclick="changeThemeAsAdmin('clean')" class="w-full text-left px-4 py-2.5 text-xs hover:bg-slate-50 flex items-center space-x-2.5 transition">
+                <span class="w-3.5 h-3.5 rounded-full bg-slate-200 border border-slate-400 shadow-sm"></span>
                 <span class="font-medium text-slate-700">Clean Minimalist (คลีน)</span>
               </button>
-              <div class="px-3 pt-2 pb-1 border-t border-slate-100 text-[10px] text-slate-400 leading-tight">
+              <div class="px-3.5 pt-2 pb-1 border-t border-slate-100 text-[10px] text-slate-400 leading-tight">
                 * เมื่อ Admin เปลี่ยนธีม ผู้ใช้งานทุกคนจะเห็นธีมนี้อัตโนมัติ
               </div>
             </div>
           </div>
 
           <!-- User Profile / Login Area -->
-          <div id="userAuthContainer" class="flex items-center space-x-2">
+          <div id="userAuthContainer" class="flex items-center">
             <!-- Rendered by JS -->
           </div>
 
           <!-- Quick Refresh Button -->
-          <button onclick="fetchData()" title="รีเฟรชข้อมูลจาก Google Sheet" class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs transition">
+          <button onclick="fetchData()" title="รีเฟรชข้อมูลจาก Google Sheet" class="h-9 w-9 rounded-xl bg-slate-900/35 hover:bg-white/20 border border-white/20 text-white text-xs transition flex items-center justify-center shadow-sm cursor-pointer active:scale-95">
             <i id="refreshIcon" class="fa-solid fa-arrows-rotate"></i>
           </button>
         </div>
 
       </div>
 
-      <!-- Navigation Tabs (Only Dashboard & Table) -->
-      <div class="flex space-x-1 border-t border-white/10 pt-1 pb-1 overflow-x-auto text-xs">
-        <button onclick="switchTab('dashboard')" id="tabBtnDashboard" class="px-3 py-1.5 rounded-lg font-medium text-white bg-white/20 flex items-center space-x-1.5 transition text-xs">
-          <i class="fa-solid fa-chart-pie"></i>
-          <span>แดชบอร์ดสรุปผู้บริหาร</span>
-        </button>
-        <button onclick="switchTab('table')" id="tabBtnTable" class="px-3 py-1.5 rounded-lg font-medium text-white/70 hover:text-white hover:bg-white/10 flex items-center space-x-1.5 transition text-xs">
-          <i class="fa-solid fa-table-list"></i>
-          <span>สำรวจและจัดการข้อมูล</span>
-        </button>
+      <!-- Mobile & Tablet Navigation Tabs (< lg) -->
+      <div class="lg:hidden pb-2.5 pt-1 border-t border-white/10">
+        <div class="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-slate-900/35 backdrop-blur-md border border-white/10">
+          <button onclick="switchTab('dashboard')" id="mobileTabBtnDashboard" class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition bg-white/20 text-white shadow-sm cursor-pointer">
+            <i class="fa-solid fa-chart-pie text-amber-300"></i>
+            <span>แดชบอร์ด</span>
+          </button>
+          <button onclick="switchTab('table')" id="mobileTabBtnTable" class="px-3 py-1.5 rounded-lg text-xs font-medium flex items-center justify-center gap-1.5 transition text-white/70 hover:text-white cursor-pointer">
+            <i class="fa-solid fa-table-list"></i>
+            <span>จัดการข้อมูล</span>
+          </button>
+        </div>
       </div>
 
     </div>
+    <!-- Fine Gold Accent Gradient Line at bottom -->
+    <div class="h-[1.5px] w-full bg-gradient-to-r from-transparent via-amber-400/50 to-transparent"></div>
   </header>
 
   <!-- ========================================================================= -->
@@ -472,167 +585,173 @@
     <!-- ========================================================================= -->
     <div id="tabDashboard" class="space-y-2.5 sm:space-y-3">
 
-      <!-- PERSPECTIVE / VIEW SWITCHER + RATIO FORMULA BAR -->
-      <div class="theme-card rounded-xl p-2 sm:p-2.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+      <!-- PERSPECTIVE / VIEW SWITCHER -->
+      <div class="theme-card rounded-xl p-1.5 sm:p-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 border border-slate-200/80 dark:border-slate-800 shadow-xs">
         
         <!-- Left: View Mode Segmented Controls -->
-        <div class="flex items-center gap-2 flex-wrap">
-          <span class="text-[11px] font-bold uppercase tracking-wider hidden md:inline-flex items-center" style="color: var(--text-muted);">
-            <i class="fa-solid fa-eye text-blue-600 mr-1"></i> โหมด:
-          </span>
-          <div class="inline-flex p-0.5 rounded-lg bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
-            <button onclick="setViewMode('kits')" id="btnViewKits" class="px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center gap-1.5 bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-300 shadow-sm">
-              <i class="fa-solid fa-boxes-stacked"></i>
-              <span>จำนวนชุดตรวจ (กล่อง/ชุด)</span>
-            </button>
-            <button onclick="setViewMode('samples')" id="btnViewSamples" class="px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
-              <i class="fa-solid fa-microscope text-emerald-500"></i>
-              <span>จำนวนตัวอย่างที่วิเคราะห์ได้ (ตัวอย่าง)</span>
-            </button>
+        <div class="flex items-center gap-2 flex-wrap min-w-0">
+          <div class="hidden sm:flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider" style="color: var(--text-muted);">
+            <i class="fa-solid fa-layer-group text-blue-600"></i>
+            <span>มุมมอง:</span>
           </div>
-        </div>
-
-        <!-- Right: Capacity Factor Formula Pills -->
-        <div class="w-full sm:w-auto bg-blue-50/70 dark:bg-blue-950/30 px-2.5 py-1 rounded-lg border border-blue-100 dark:border-blue-900/40 text-[11px]">
-          <div class="flex items-center gap-1.5 flex-wrap">
-            <span class="px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 font-medium">
-              🧪 pH: <b>80</b> ตัวอย่าง
-            </span>
-            <span class="px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-200 font-medium">
-              🌿 NPK: <b>50</b> ตัวอย่าง
-            </span>
-            <span class="px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-200 font-medium">
-              ⚡ EC: <b>30</b> ตัวอย่าง
-            </span>
+          <div class="w-full sm:w-auto inline-flex p-1 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 shadow-inner">
+            <button onclick="setViewMode('kits')" id="btnViewKits" class="flex-1 sm:flex-initial px-2.5 sm:px-3.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 sm:gap-2 bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-300 shadow-sm cursor-pointer">
+              <i class="fa-solid fa-boxes-stacked text-[11px] sm:text-xs"></i>
+              <span class="hidden sm:inline">จำนวนชุดตรวจ (กล่อง/ชุด)</span>
+              <span class="sm:hidden">ชุดตรวจ (กล่อง)</span>
+            </button>
+            <button onclick="setViewMode('samples')" id="btnViewSamples" class="flex-1 sm:flex-initial px-2.5 sm:px-3.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 sm:gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+              <i class="fa-solid fa-microscope text-emerald-500 text-[11px] sm:text-xs"></i>
+              <span class="hidden sm:inline">จำนวนตัวอย่างที่สามารถวิเคราะห์ได้</span>
+              <span class="sm:hidden">ตัวอย่างที่สามารถวิเคราะห์ได้</span>
+            </button>
           </div>
         </div>
 
       </div>
 
       <!-- ADVANCED FILTER BAR (STICKY EXECUTIVE CONTROLS) -->
-      <div id="executiveFiltersCard" class="theme-card rounded-xl p-2.5 sm:p-3 sticky-filter-bar shadow-md border border-slate-200/90 dark:border-slate-800 transition-all duration-300">
-        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-2 pb-2 border-b border-slate-200 dark:border-slate-800">
-          <div class="flex items-center justify-between w-full lg:w-auto">
-            <div>
-              <div class="flex items-center gap-2">
-                <h2 class="text-xs sm:text-sm font-bold flex items-center gap-1.5">
-                  <i class="fa-solid fa-sliders text-amber-500"></i>
-                  <span>ตัวกรองข้อมูลและเงื่อนไขการรายงาน (Executive Filters)</span>
-                </h2>
-                <!-- Active Filters Pill Summary (visible when scrolling or collapsed) -->
-                <div id="filterActivePills" class="hidden lg:inline-flex items-center">
-                  <!-- Populated by JS -->
-                </div>
+      <div id="executiveFiltersCard" class="theme-card rounded-xl p-2 sm:p-2.5 sticky-filter-bar shadow-md border border-slate-200/90 dark:border-slate-800 transition-all duration-300">
+        <!-- Header & Action Row -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-1.5 pb-1.5 border-b border-slate-200/80 dark:border-slate-800">
+          <div class="flex items-center justify-between w-full sm:w-auto min-w-0">
+            <div class="flex items-center gap-1.5 min-w-0">
+              <div class="w-6 h-6 rounded-lg bg-amber-500/15 dark:bg-amber-500/25 text-amber-500 flex items-center justify-center shrink-0 shadow-xs">
+                <i class="fa-solid fa-sliders text-xs"></i>
               </div>
-              <p class="text-[10.5px] sm:text-[11px] leading-tight" style="color: var(--text-muted);">
-                กรองสถิติการจัดสรรตามปีงบประมาณ, สำนักงานพัฒนาที่ดินเขต (สพข. 1 - 12), จังหวัด, สถานีพัฒนาที่ดิน และช่วงวันที่ส่งมอบ
-              </p>
+              <div class="min-w-0 flex items-center gap-1 flex-wrap">
+                <h2 class="text-xs sm:text-[13px] font-bold tracking-tight text-slate-800 dark:text-slate-100 flex items-center gap-1 whitespace-nowrap">
+                  <span>ตัวกรองและเงื่อนไข</span>
+                </h2>
+                <span class="hidden md:inline-block text-[9px] font-semibold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">Executive</span>
+                <span id="activeFiltersBadgeCount" class="hidden text-[9px] font-semibold px-1.5 py-0.2 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border border-amber-300/80 dark:border-amber-700/80"></span>
+              </div>
             </div>
 
             <!-- Mobile Collapse/Expand Toggle -->
-            <button onclick="toggleFiltersCollapse()" id="btnToggleFiltersMobile" class="lg:hidden p-1.5 rounded-lg border border-slate-300 dark:border-slate-700 text-xs hover:bg-slate-100 dark:hover:bg-slate-800" title="ย่อ/ขยายตัวกรอง">
-              <i id="toggleFiltersIconMobile" class="fa-solid fa-chevron-up text-xs"></i>
+            <button onclick="toggleFiltersCollapse()" id="btnToggleFiltersMobile" class="sm:hidden h-7 px-2 rounded-lg border border-slate-300 dark:border-slate-700 text-[11px] font-medium hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center gap-1 shrink-0 ml-1.5" title="ย่อ/ขยายตัวกรอง">
+              <i id="toggleFiltersIconMobile" class="fa-solid fa-chevron-up text-[9px]"></i>
+              <span id="toggleFiltersTextMobile" class="text-[10px]">ย่อ</span>
             </button>
           </div>
           
-          <div class="flex items-center gap-1.5 self-end lg:self-center flex-wrap">
+          <div class="flex items-center gap-1 w-full sm:w-auto flex-wrap sm:flex-nowrap justify-end">
             <!-- Desktop Collapse/Expand Toggle -->
-            <button onclick="toggleFiltersCollapse()" class="hidden lg:inline-flex px-2 py-1 rounded-md text-[11px] font-medium border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition items-center gap-1 text-slate-600 dark:text-slate-300" title="ย่อ/ขยายแผงตัวกรองเพื่อเพิ่มพื้นที่แสดงผล">
-              <i id="toggleFiltersIconDesktop" class="fa-solid fa-chevron-up text-[9px]"></i>
-              <span id="toggleFiltersTextDesktop">ย่อตัวกรอง</span>
+            <button onclick="toggleFiltersCollapse()" id="btnToggleFiltersDesktop" class="hidden sm:inline-flex h-7 px-2 py-0.5 rounded-lg text-[11px] font-semibold border border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition items-center gap-1 text-slate-700 dark:text-slate-200 cursor-pointer shadow-xs whitespace-nowrap" title="ย่อ/ขยายแผงตัวกรองเพื่อเพิ่มพื้นที่แสดงผล">
+              <i id="toggleFiltersIconDesktop" class="fa-solid fa-chevron-up text-[9px] text-amber-500"></i>
+              <span id="toggleFiltersTextDesktop" class="whitespace-nowrap">ย่อตัวกรอง</span>
             </button>
 
             <!-- Reset Filters -->
-            <button onclick="resetFilters()" class="px-2.5 py-1 rounded-md text-xs font-medium border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1">
-              <i class="fa-solid fa-rotate-left text-[10px]"></i> รีเซ็ตตัวกรอง
+            <button onclick="resetFilters()" class="h-7 px-2 py-0.5 rounded-lg text-[11px] font-medium border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1 text-slate-600 dark:text-slate-300 cursor-pointer shadow-xs whitespace-nowrap" title="รีเซ็ตค่าตัวกรองทั้งหมดกลับสู่ค่าเริ่มต้น">
+              <i class="fa-solid fa-rotate-left text-[9px]"></i>
+              <span>รีเซ็ต<span class="hidden md:inline">ตัวกรอง</span></span>
             </button>
 
             <!-- Export to Excel (ADMIN ONLY) -->
-            <button id="btnExportExcel" onclick="exportToExcel()" class="hidden px-2.5 py-1 rounded-md text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm transition items-center gap-1" title="ส่งออกไฟล์ Excel (เฉพาะสิทธิ์ผู้ดูแลระบบ Admin)">
-              <i class="fa-solid fa-file-excel text-[11px]"></i>
-              <span>ส่งออก Excel</span>
-              <span class="text-[9px] px-1 py-0.2 rounded bg-emerald-800/60 font-bold uppercase">Admin</span>
+            <button id="btnExportExcel" onclick="exportToExcel()" class="hidden h-7 px-2.5 py-0.5 rounded-lg text-[11px] font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-xs transition items-center gap-1 cursor-pointer whitespace-nowrap" title="ส่งออกไฟล์ Excel (เฉพาะสิทธิ์ผู้ดูแลระบบ Admin)">
+              <i class="fa-solid fa-file-excel text-[10px]"></i>
+              <span class="hidden md:inline">ส่งออก</span>
+              <span>Excel</span>
+              <span class="text-[8.5px] px-1 py-0.2 rounded bg-emerald-800/60 font-bold uppercase">Admin</span>
             </button>
 
             <!-- Export to PDF Report (Executive Table Report) -->
-            <button onclick="openPdfReportModal()" class="px-2.5 py-1 rounded-md text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 shadow-sm transition flex items-center gap-1" title="พิมพ์/ส่งออกรายงาน PDF สรุปภาพรวมทางการ (ตารางสรุปรายปี รายเขต รายจังหวัด)">
-              <i class="fa-solid fa-file-pdf text-[11px]"></i>
-              <span>ส่งออกรายงาน PDF</span>
+            <button onclick="openPdfReportModal()" class="h-7 px-2 sm:px-2.5 py-0.5 rounded-lg text-[11px] font-semibold text-white bg-rose-600 hover:bg-rose-700 shadow-xs transition flex items-center gap-1 cursor-pointer active:scale-95 whitespace-nowrap" title="พิมพ์/ส่งออกรายงาน PDF สรุปภาพรวมทางการ (ตารางสรุปรายปี รายเขต รายจังหวัด)">
+              <i class="fa-solid fa-file-pdf text-[10px]"></i>
+              <span>รายงาน PDF</span>
             </button>
           </div>
         </div>
 
+        <!-- SELECTED FILTERS ACTIVE PILLS RIBBON (Visible ALWAYS, Floating Sticky) -->
+        <div id="filterActivePillsContainer" class="py-1 px-2 my-1 rounded-lg bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 flex items-center justify-between gap-1.5 overflow-x-auto">
+          <div class="flex items-center gap-1.5 min-w-0 flex-wrap">
+            <span class="flex items-center gap-1 font-bold text-[10.5px] text-slate-500 dark:text-slate-400 whitespace-nowrap shrink-0">
+              <i class="fa-solid fa-filter text-amber-500 text-[9px]"></i>
+              <span>ฟิลเตอร์:</span>
+            </span>
+            <div id="filterActivePills" class="flex items-center gap-1 flex-wrap text-[11px]">
+              <!-- Populated by JS: updateFilterPillsSummary() -->
+            </div>
+          </div>
+          <button onclick="resetFilters()" id="btnClearActivePills" class="hidden text-[10px] text-rose-600 hover:text-rose-700 dark:text-rose-400 font-semibold whitespace-nowrap cursor-pointer hover:underline flex items-center gap-1 shrink-0 ml-auto" title="ล้างเงื่อนไขตัวกรองทั้งหมด">
+            <i class="fa-solid fa-circle-xmark text-[9px]"></i>
+            <span>ล้างเงื่อนไข</span>
+          </button>
+        </div>
+
         <!-- Filter Controls Grid -->
-        <div id="filterControlsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 pt-2 transition-all">
+        <div id="filterControlsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1.5 pt-1 transition-all">
           <!-- Filter: Year -->
           <div>
-            <label class="block text-[11px] font-semibold mb-0.5" style="color: var(--text-muted);">
-              <i class="fa-regular fa-calendar mr-1 text-blue-500"></i> ปีงบประมาณ
+            <label class="block text-[10.5px] font-semibold mb-0.5 truncate" style="color: var(--text-muted);">
+              <i class="fa-regular fa-calendar mr-0.5 text-blue-500 text-[10px]"></i> ปีงบประมาณ
             </label>
-            <select id="filterYear" onchange="applyFilters()" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 px-2.5 py-1.5 bg-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            <select id="filterYear" onchange="applyFilters()" class="w-full text-[11px] h-7 rounded-md border border-slate-300 dark:border-slate-700 px-2 py-1 bg-transparent focus:ring-1.5 focus:ring-blue-500 focus:outline-none">
               <option value="ALL">ทุกปีงบประมาณ</option>
             </select>
           </div>
 
           <!-- Filter: Project -->
           <div>
-            <label class="block text-[11px] font-semibold mb-0.5" style="color: var(--text-muted);">
-              <i class="fa-solid fa-diagram-project mr-1 text-indigo-500"></i> โครงการ
+            <label class="block text-[10.5px] font-semibold mb-0.5 truncate" style="color: var(--text-muted);">
+              <i class="fa-solid fa-diagram-project mr-0.5 text-indigo-500 text-[10px]"></i> โครงการ
             </label>
-            <select id="filterProject" onchange="applyFilters()" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 px-2.5 py-1.5 bg-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            <select id="filterProject" onchange="applyFilters()" class="w-full text-[11px] h-7 rounded-md border border-slate-300 dark:border-slate-700 px-2 py-1 bg-transparent focus:ring-1.5 focus:ring-blue-500 focus:outline-none">
               <option value="ALL">ทุกโครงการ</option>
             </select>
           </div>
 
           <!-- Filter: Region (เขต 1-12) -->
           <div>
-            <label class="block text-[11px] font-semibold mb-0.5" style="color: var(--text-muted);">
-              <i class="fa-solid fa-map-location-dot mr-1 text-emerald-500"></i> สพข. เขต (1 - 12)
+            <label class="block text-[10.5px] font-semibold mb-0.5 truncate" style="color: var(--text-muted);">
+              <i class="fa-solid fa-map-location-dot mr-0.5 text-emerald-500 text-[10px]"></i> สพข. เขต (1 - 12)
             </label>
-            <select id="filterRegion" onchange="onRegionChange()" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 px-2.5 py-1.5 bg-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            <select id="filterRegion" onchange="onRegionChange()" class="w-full text-[11px] h-7 rounded-md border border-slate-300 dark:border-slate-700 px-2 py-1 bg-transparent focus:ring-1.5 focus:ring-blue-500 focus:outline-none">
               <option value="ALL">ทุกเขต (สพข. 1 - 12)</option>
             </select>
           </div>
 
           <!-- Filter: Province -->
           <div>
-            <label class="block text-[11px] font-semibold mb-0.5" style="color: var(--text-muted);">
-              <i class="fa-solid fa-city mr-1 text-amber-500"></i> จังหวัด
+            <label class="block text-[10.5px] font-semibold mb-0.5 truncate" style="color: var(--text-muted);">
+              <i class="fa-solid fa-city mr-0.5 text-amber-500 text-[10px]"></i> จังหวัด
             </label>
-            <select id="filterProvince" onchange="onProvinceChange()" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 px-2.5 py-1.5 bg-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            <select id="filterProvince" onchange="onProvinceChange()" class="w-full text-[11px] h-7 rounded-md border border-slate-300 dark:border-slate-700 px-2 py-1 bg-transparent focus:ring-1.5 focus:ring-blue-500 focus:outline-none">
               <option value="ALL">ทุกจังหวัด</option>
             </select>
           </div>
 
           <!-- Filter: Station -->
           <div>
-            <label class="block text-[11px] font-semibold mb-0.5" style="color: var(--text-muted);">
-              <i class="fa-solid fa-building-flag mr-1 text-purple-500"></i> สถานีพัฒนาที่ดิน / หน่วยงาน
+            <label class="block text-[10.5px] font-semibold mb-0.5 truncate" style="color: var(--text-muted);">
+              <i class="fa-solid fa-building-flag mr-0.5 text-purple-500 text-[10px]"></i> สถานีฯ / หน่วยงาน
             </label>
-            <select id="filterStation" onchange="applyFilters()" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 px-2.5 py-1.5 bg-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            <select id="filterStation" onchange="applyFilters()" class="w-full text-[11px] h-7 rounded-md border border-slate-300 dark:border-slate-700 px-2 py-1 bg-transparent focus:ring-1.5 focus:ring-blue-500 focus:outline-none">
               <option value="ALL">ทุกสถานี / ทุกหน่วยงาน</option>
             </select>
           </div>
 
           <!-- Delivery Date Range Picker (Calendar / ปฏิทิน) -->
-          <div class="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-5 pt-2 mt-1 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
-            <div class="flex flex-wrap items-center gap-2">
-              <span class="text-[11px] font-bold flex items-center gap-1.5" style="color: var(--text-main);">
-                <i class="fa-solid fa-truck-ramp-box text-rose-500"></i>
-                <span>ช่วงวันที่ส่งมอบ (ปฏิทิน):</span>
+          <div class="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-5 pt-1.5 mt-0.5 border-t border-slate-200/70 dark:border-slate-800/70 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+            <div class="flex flex-wrap items-center gap-1.5 w-full">
+              <span class="text-[10.5px] font-bold flex items-center gap-1 shrink-0" style="color: var(--text-main);">
+                <i class="fa-solid fa-calendar-plus text-indigo-500 text-[10px]"></i>
+                <span>ช่วงวันที่นำเข้าข้อมูล:</span>
               </span>
-              <div class="flex items-center gap-1.5 text-xs">
-                <span class="text-[11px] text-slate-500">จาก</span>
-                <input type="date" id="filterDeliveryDateFrom" onchange="applyFilters()" class="text-xs rounded-lg border border-slate-300 dark:border-slate-700 px-2.5 py-1 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer">
-                <span class="text-[11px] text-slate-500">ถึง</span>
-                <input type="date" id="filterDeliveryDateTo" onchange="applyFilters()" class="text-xs rounded-lg border border-slate-300 dark:border-slate-700 px-2.5 py-1 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer">
-                <button type="button" onclick="clearDateFilter()" title="ล้างช่วงวันที่" class="px-2.5 py-1 rounded-lg text-[11px] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition flex items-center gap-1">
-                  <i class="fa-solid fa-xmark text-slate-400"></i>
+              <div class="flex items-center gap-1 text-[11px] flex-1 min-w-0">
+                <span class="text-[10px] text-slate-500 shrink-0">จาก</span>
+                <input type="date" id="filterDeliveryDateFrom" onchange="applyFilters()" class="text-[10.5px] h-6.5 rounded-md border border-slate-300 dark:border-slate-700 px-1 py-0.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:ring-1.5 focus:ring-blue-500 focus:outline-none cursor-pointer flex-1 min-w-0 max-w-[125px]">
+                <span class="text-[10px] text-slate-500 shrink-0">ถึง</span>
+                <input type="date" id="filterDeliveryDateTo" onchange="applyFilters()" class="text-[10.5px] h-6.5 rounded-md border border-slate-300 dark:border-slate-700 px-1 py-0.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:ring-1.5 focus:ring-blue-500 focus:outline-none cursor-pointer flex-1 min-w-0 max-w-[125px]">
+                <button type="button" onclick="clearDateFilter()" title="ล้างช่วงวันที่นำเข้าข้อมูล" class="h-7 px-2 py-0.5 rounded-lg text-[11px] font-medium border border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1 text-slate-600 dark:text-slate-300 cursor-pointer shadow-xs whitespace-nowrap shrink-0">
+                  <i class="fa-solid fa-rotate-left text-[9px]"></i>
                   <span>ล้างวันที่</span>
                 </button>
               </div>
             </div>
-            <div class="text-[10.5px] text-slate-400 italic">
+            <div class="text-[10px] text-slate-400 italic">
               
             </div>
           </div>
@@ -644,67 +763,83 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-3.5">
         
         <!-- Metric 1: Total Testkits / Testkits Samples -->
-        <div class="theme-card rounded-xl p-3.5 sm:p-4 relative overflow-hidden">
-          <div class="flex justify-between items-start">
-            <div>
-              <p id="kpiTitleCard1" class="text-xs font-semibold uppercase tracking-wider" style="color: var(--text-muted);">
-                ยอดแจกชุดตรวจดินรวม (Testkits)
+        <div class="theme-card rounded-xl p-3 sm:p-3.5 relative overflow-hidden flex flex-col justify-between">
+          <div class="flex justify-between items-start mb-2.5">
+            <div class="min-w-0 pr-1.5">
+              <p id="kpiTitleCard1" class="text-xs font-bold leading-snug tracking-tight text-slate-600 dark:text-slate-300">
+                ยอดแจกชุดตรวจดิน (Testkits)
               </p>
-              <h3 id="statTotalTestkit" class="text-2xl sm:text-3xl font-bold mt-1.5 tracking-tight text-blue-600 dark:text-blue-400">
-                0
-              </h3>
-              <p id="kpiUnitCard1" class="text-xs mt-0.5 font-medium" style="color: var(--text-muted);">ชุด (pH, NPK, EC)</p>
             </div>
-            <div class="w-10 h-10 rounded-lg stat-gradient-1 text-white flex items-center justify-center text-lg shadow-sm">
+            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg stat-gradient-1 text-white flex items-center justify-center text-sm sm:text-base shadow-xs shrink-0">
               <i id="kpiIconCard1" class="fa-solid fa-box-open"></i>
             </div>
           </div>
-          <!-- Sub-breakdown badges -->
-          <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-800 grid grid-cols-3 gap-1 text-center">
-            <div class="bg-blue-50 dark:bg-blue-900/30 p-1 rounded-md">
-              <span class="text-[10px] block text-blue-600 font-semibold">pH</span>
-              <span id="statPhTestkit" class="text-xs font-bold text-slate-800 dark:text-slate-200">0</span>
+          <!-- 3-Column Breakdown Badges (pH, NPK, EC) as Main Metric Focus -->
+          <div class="grid grid-cols-3 gap-1 sm:gap-1.5 text-center">
+            <div class="bg-blue-50/70 dark:bg-blue-900/25 border border-blue-100 dark:border-blue-800/40 p-1 sm:p-1.5 rounded-xl flex flex-col justify-between min-w-0">
+              <div class="flex items-center justify-center gap-1 mb-0.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                <span class="text-[10px] sm:text-[10.5px] font-bold text-blue-600 dark:text-blue-400">pH</span>
+              </div>
+              <span id="statPhTestkit" class="text-[11px] sm:text-xs xl:text-[13.5px] 2xl:text-base font-black text-slate-800 dark:text-slate-100 font-mono tracking-tighter tabular-nums whitespace-nowrap block" title="0">0</span>
+              <span class="text-[9.5px] sm:text-[10px] text-slate-400 dark:text-slate-400 kpi-unit-tag1 mt-0.5 font-medium">ชุด</span>
             </div>
-            <div class="bg-emerald-50 dark:bg-emerald-900/30 p-1 rounded-md">
-              <span class="text-[10px] block text-emerald-600 font-semibold">NPK</span>
-              <span id="statNpkTestkit" class="text-xs font-bold text-slate-800 dark:text-slate-200">0</span>
+            <div class="bg-emerald-50/70 dark:bg-emerald-900/25 border border-emerald-100 dark:border-emerald-800/40 p-1 sm:p-1.5 rounded-xl flex flex-col justify-between min-w-0">
+              <div class="flex items-center justify-center gap-1 mb-0.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span class="text-[10px] sm:text-[10.5px] font-bold text-emerald-600 dark:text-emerald-400">NPK</span>
+              </div>
+              <span id="statNpkTestkit" class="text-[11px] sm:text-xs xl:text-[13.5px] 2xl:text-base font-black text-slate-800 dark:text-slate-100 font-mono tracking-tighter tabular-nums whitespace-nowrap block" title="0">0</span>
+              <span class="text-[9.5px] sm:text-[10px] text-slate-400 dark:text-slate-400 kpi-unit-tag1 mt-0.5 font-medium">ชุด</span>
             </div>
-            <div class="bg-amber-50 dark:bg-amber-900/30 p-1 rounded-md">
-              <span class="text-[10px] block text-amber-600 font-semibold">EC</span>
-              <span id="statEcTestkit" class="text-xs font-bold text-slate-800 dark:text-slate-200">0</span>
+            <div class="bg-amber-50/70 dark:bg-amber-900/25 border border-amber-100 dark:border-amber-800/40 p-1 sm:p-1.5 rounded-xl flex flex-col justify-between min-w-0">
+              <div class="flex items-center justify-center gap-1 mb-0.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                <span class="text-[10px] sm:text-[10.5px] font-bold text-amber-600 dark:text-amber-400">EC</span>
+              </div>
+              <span id="statEcTestkit" class="text-[11px] sm:text-xs xl:text-[13.5px] 2xl:text-base font-black text-slate-800 dark:text-slate-100 font-mono tracking-tighter tabular-nums whitespace-nowrap block" title="0">0</span>
+              <span class="text-[9.5px] sm:text-[10px] text-slate-400 dark:text-slate-400 kpi-unit-tag1 mt-0.5 font-medium">ชุด</span>
             </div>
           </div>
         </div>
 
         <!-- Metric 2: Total Refills / Refill Samples -->
-        <div class="theme-card rounded-xl p-3.5 sm:p-4 relative overflow-hidden">
-          <div class="flex justify-between items-start">
-            <div>
-              <p id="kpiTitleCard2" class="text-xs font-semibold uppercase tracking-wider" style="color: var(--text-muted);">
-                ยอดแจกชุดน้ำยาเติมรวม (Refills)
+        <div class="theme-card rounded-xl p-3 sm:p-3.5 relative overflow-hidden flex flex-col justify-between">
+          <div class="flex justify-between items-start mb-2.5">
+            <div class="min-w-0 pr-1.5">
+              <p id="kpiTitleCard2" class="text-xs font-bold leading-snug tracking-tight text-slate-600 dark:text-slate-300">
+                ยอดแจกชุดน้ำยาเติม (Refills)
               </p>
-              <h3 id="statTotalRefill" class="text-2xl sm:text-3xl font-bold mt-1.5 tracking-tight text-emerald-600 dark:text-emerald-400">
-                0
-              </h3>
-              <p id="kpiUnitCard2" class="text-xs mt-0.5 font-medium" style="color: var(--text-muted);">ชุดน้ำยาเติมสารเคมี</p>
             </div>
-            <div class="w-10 h-10 rounded-lg stat-gradient-2 text-white flex items-center justify-center text-lg shadow-sm">
+            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg stat-gradient-2 text-white flex items-center justify-center text-sm sm:text-base shadow-xs shrink-0">
               <i id="kpiIconCard2" class="fa-solid fa-bottle-droplet"></i>
             </div>
           </div>
-          <!-- Sub-breakdown badges -->
-          <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-800 grid grid-cols-3 gap-1 text-center">
-            <div class="bg-blue-50 dark:bg-blue-900/30 p-1 rounded-md">
-              <span class="text-[10px] block text-blue-600 font-semibold">pH</span>
-              <span id="statPhRefill" class="text-xs font-bold text-slate-800 dark:text-slate-200">0</span>
+          <!-- 3-Column Breakdown Badges (pH, NPK, EC) as Main Metric Focus -->
+          <div class="grid grid-cols-3 gap-1 sm:gap-1.5 text-center">
+            <div class="bg-blue-50/70 dark:bg-blue-900/25 border border-blue-100 dark:border-blue-800/40 p-1 sm:p-1.5 rounded-xl flex flex-col justify-between min-w-0">
+              <div class="flex items-center justify-center gap-1 mb-0.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                <span class="text-[10px] sm:text-[10.5px] font-bold text-blue-600 dark:text-blue-400">pH</span>
+              </div>
+              <span id="statPhRefill" class="text-[11px] sm:text-xs xl:text-[13.5px] 2xl:text-base font-black text-slate-800 dark:text-slate-100 font-mono tracking-tighter tabular-nums whitespace-nowrap block" title="0">0</span>
+              <span class="text-[9.5px] sm:text-[10px] text-slate-400 dark:text-slate-400 kpi-unit-tag2 mt-0.5 font-medium">ชุด</span>
             </div>
-            <div class="bg-emerald-50 dark:bg-emerald-900/30 p-1 rounded-md">
-              <span class="text-[10px] block text-emerald-600 font-semibold">NPK</span>
-              <span id="statNpkRefill" class="text-xs font-bold text-slate-800 dark:text-slate-200">0</span>
+            <div class="bg-emerald-50/70 dark:bg-emerald-900/25 border border-emerald-100 dark:border-emerald-800/40 p-1 sm:p-1.5 rounded-xl flex flex-col justify-between min-w-0">
+              <div class="flex items-center justify-center gap-1 mb-0.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span class="text-[10px] sm:text-[10.5px] font-bold text-emerald-600 dark:text-emerald-400">NPK</span>
+              </div>
+              <span id="statNpkRefill" class="text-[11px] sm:text-xs xl:text-[13.5px] 2xl:text-base font-black text-slate-800 dark:text-slate-100 font-mono tracking-tighter tabular-nums whitespace-nowrap block" title="0">0</span>
+              <span class="text-[9.5px] sm:text-[10px] text-slate-400 dark:text-slate-400 kpi-unit-tag2 mt-0.5 font-medium">ชุด</span>
             </div>
-            <div class="bg-amber-50 dark:bg-amber-900/30 p-1 rounded-md">
-              <span class="text-[10px] block text-amber-600 font-semibold">EC</span>
-              <span id="statEcRefill" class="text-xs font-bold text-slate-800 dark:text-slate-200">0</span>
+            <div class="bg-amber-50/70 dark:bg-amber-900/25 border border-amber-100 dark:border-amber-800/40 p-1 sm:p-1.5 rounded-xl flex flex-col justify-between min-w-0">
+              <div class="flex items-center justify-center gap-1 mb-0.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                <span class="text-[10px] sm:text-[10.5px] font-bold text-amber-600 dark:text-amber-400">EC</span>
+              </div>
+              <span id="statEcRefill" class="text-[11px] sm:text-xs xl:text-[13.5px] 2xl:text-base font-black text-slate-800 dark:text-slate-100 font-mono tracking-tighter tabular-nums whitespace-nowrap block" title="0">0</span>
+              <span class="text-[9.5px] sm:text-[10px] text-slate-400 dark:text-slate-400 kpi-unit-tag2 mt-0.5 font-medium">ชุด</span>
             </div>
           </div>
         </div>
@@ -936,10 +1071,10 @@
               <div>
                 <h3 class="text-sm font-bold flex items-center gap-2">
                   <i class="fa-solid fa-table-cells-large text-emerald-600"></i>
-                  สรุปผลการจัดสรรและศักยภาพตัวอย่างดินแยกตามโครงการ
+                  สรุปผลการจัดสรรและจำนวนตัวอย่างที่สามารถวิเคราะห์ได้แยกตามโครงการ
                 </h3>
                 <p class="text-xs" style="color: var(--text-muted);">
-                  สถิติจำนวนชุดตรวจดิน ชุดน้ำยาเติม ศักยภาพการตรวจวิเคราะห์ตัวอย่างดิน และสัดส่วนร้อยละ
+                  สถิติจำนวนชุดตรวจดิน ชุดน้ำยาเติม จำนวนตัวอย่างที่สามารถวิเคราะห์ได้ และสัดส่วนร้อยละ
                 </p>
               </div>
               <span class="text-xs px-2.5 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 font-semibold" id="projectCountBadge">
@@ -957,7 +1092,7 @@
                     <th class="py-2.5 px-2.5 text-right">ชุดตรวจ (กล่อง)</th>
                     <th class="py-2.5 px-2.5 text-right">ชุดเติม (ชุด)</th>
                     <th class="py-2.5 px-3 text-right bg-blue-50/50 dark:bg-blue-900/20 font-bold">รวมชุดทั้งหมด</th>
-                    <th class="py-2.5 px-3 text-right bg-emerald-50/50 dark:bg-emerald-900/20 font-bold text-emerald-700 dark:text-emerald-300">ศักยภาพดิน (ตัวอย่าง)</th>
+                    <th class="py-2.5 px-3 text-right bg-emerald-50/50 dark:bg-emerald-900/20 font-bold text-emerald-700 dark:text-emerald-300">จำนวนตัวอย่างที่สามารถวิเคราะห์ได้</th>
                     <th class="py-2.5 px-2.5 text-right">สัดส่วน (%)</th>
                   </tr>
                 </thead>
@@ -990,9 +1125,6 @@
               <i class="fa-solid fa-database text-blue-600"></i>
               รายการข้อมูลการแจกจ่ายชุดตรวจดิน (Data Explorer)
             </h2>
-            <p class="text-xs" style="color: var(--text-muted);">
-              ค้นหา ดูรายละเอียด เพิ่ม แก้ไข ลบ และนำเข้าข้อมูลจากไฟล์ Excel (คำนวณศักยภาพตัวอย่างดิน: pH=80, NPK=50, EC=30)
-            </p>
           </div>
 
           <div class="flex items-center gap-2 flex-wrap w-full lg:w-auto justify-between lg:justify-end">
@@ -1038,14 +1170,14 @@
                 <th class="p-3 whitespace-nowrap min-w-[85px]">เขต</th>
                 <th class="p-3 whitespace-nowrap min-w-[180px]">สถานีพัฒนาที่ดิน</th>
                 <th class="p-3 whitespace-nowrap min-w-[220px]">โครงการ</th>
-                <th class="p-3 text-center bg-blue-50 dark:bg-blue-900/20 whitespace-nowrap min-w-[85px]">pH Test<br><span class="text-[9px] font-normal text-blue-500">×80</span></th>
-                <th class="p-3 text-center bg-emerald-50 dark:bg-emerald-900/20 whitespace-nowrap min-w-[85px]">NPK Test<br><span class="text-[9px] font-normal text-emerald-500">×50</span></th>
-                <th class="p-3 text-center bg-amber-50 dark:bg-amber-900/20 whitespace-nowrap min-w-[85px]">EC Test<br><span class="text-[9px] font-normal text-amber-500">×30</span></th>
-                <th class="p-3 text-center bg-purple-50 dark:bg-purple-900/20 whitespace-nowrap min-w-[85px]">pH Refill<br><span class="text-[9px] font-normal text-purple-500">×80</span></th>
-                <th class="p-3 text-center bg-rose-50 dark:bg-rose-900/20 whitespace-nowrap min-w-[85px]">NPK Refill<br><span class="text-[9px] font-normal text-rose-500">×50</span></th>
-                <th class="p-3 text-center bg-cyan-50 dark:bg-cyan-900/20 whitespace-nowrap min-w-[85px]">EC Refill<br><span class="text-[9px] font-normal text-cyan-500">×30</span></th>
+                <th class="p-3 text-center bg-blue-50 dark:bg-blue-900/20 whitespace-nowrap min-w-[85px]">pH Test</th>
+                <th class="p-3 text-center bg-emerald-50 dark:bg-emerald-900/20 whitespace-nowrap min-w-[85px]">NPK Test</th>
+                <th class="p-3 text-center bg-amber-50 dark:bg-amber-900/20 whitespace-nowrap min-w-[85px]">EC Test</th>
+                <th class="p-3 text-center bg-purple-50 dark:bg-purple-900/20 whitespace-nowrap min-w-[85px]">pH Refill</th>
+                <th class="p-3 text-center bg-rose-50 dark:bg-rose-900/20 whitespace-nowrap min-w-[85px]">NPK Refill</th>
+                <th class="p-3 text-center bg-cyan-50 dark:bg-cyan-900/20 whitespace-nowrap min-w-[85px]">EC Refill</th>
                 <th class="p-3 text-right font-bold whitespace-nowrap min-w-[105px]">รวมชุด (กล่อง)</th>
-                <th class="p-3 text-right font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20 whitespace-nowrap min-w-[160px]">จำนวนตัวอย่างที่วิเคราะห์ได้ (ตัวอย่าง)</th>
+                <th class="p-3 text-right font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20 whitespace-nowrap min-w-[160px]">จำนวนตัวอย่างที่สามารถวิเคราะห์ได้</th>
                 <th class="p-3 text-center whitespace-nowrap min-w-[80px]">จัดการ</th>
               </tr>
             </thead>
@@ -1417,6 +1549,129 @@
   <!-- CLIENT LOGIC & REALTIME GOOGLE SHEET INTEGRATION -->
   <!-- ========================================================================= -->
   <script>
+    // =======================================================================
+    // EXECUTIVE SECURITY & ANTI-DEVTOOLS / ANTI-COPY SHIELD
+    // =======================================================================
+    (function initSecurityShield() {
+      // Developer bypass via URL parameter: ?dev=1 or ?debug=1 or localStorage
+      const urlParams = new URLSearchParams(window.location.search);
+      const isDevBypass = urlParams.get('dev') === '1' || urlParams.get('debug') === '1' || localStorage.getItem('report_testkit_dev') === '1';
+      if (isDevBypass) {
+        window.__DEV_MODE__ = true;
+        console.warn("⚠️ [Security] Developer bypass active. Anti-DevTools shield disabled.");
+        return;
+      }
+
+      // Security Toast Controller
+      let toastTimer = null;
+      function showSecurityToast(message) {
+        const toast = document.getElementById("securityToast");
+        const toastText = document.getElementById("securityToastText");
+        if (!toast || !toastText) return;
+        toastText.innerText = message || "ไม่อนุญาตให้เปิด Developer Tools หรือคัดลอกซอร์สโค้ด";
+        toast.classList.add("show");
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toast.classList.remove("show");
+        }, 2500);
+      }
+
+      // 1. Block Context Menu (Right-Click) except on inputs/textareas
+      document.addEventListener('contextmenu', function(e) {
+        const tag = (e.target && e.target.tagName) ? e.target.tagName.toUpperCase() : '';
+        if (tag !== 'INPUT' && tag !== 'TEXTAREA') {
+          e.preventDefault();
+          showSecurityToast("ไม่อนุญาตให้คลิกขวาในระบบ (Security Protected)");
+          return false;
+        }
+      }, { passive: false });
+
+      // 2. Block DevTools & Source Code Inspection Keyboard Shortcuts
+      document.addEventListener('keydown', function(e) {
+        const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+        const cmdOrCtrl = isMac ? e.metaKey : e.ctrlKey;
+        const key = e.key ? e.key.toUpperCase() : '';
+        const keyCode = e.keyCode || e.which;
+
+        // F12
+        if (key === 'F12' || keyCode === 123) {
+          e.preventDefault();
+          e.stopPropagation();
+          showSecurityToast("ฟังก์ชันตรวจสอบโค้ด (DevTools) ถูกปิดกั้นเพื่อความปลอดภัย");
+          return false;
+        }
+
+        // Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C (Cmd+Option+I/J/C on Mac)
+        if ((cmdOrCtrl && e.shiftKey && (key === 'I' || key === 'J' || key === 'C')) ||
+            (isMac && e.metaKey && e.altKey && (key === 'I' || key === 'J' || key === 'C'))) {
+          e.preventDefault();
+          e.stopPropagation();
+          showSecurityToast("ไม่อนุญาตให้เปิด Developer Tools (Security Protected)");
+          return false;
+        }
+
+        // Ctrl+U / Cmd+Option+U (View Page Source)
+        if ((cmdOrCtrl && key === 'U') || (isMac && e.metaKey && e.altKey && key === 'U')) {
+          e.preventDefault();
+          e.stopPropagation();
+          showSecurityToast("ไม่อนุญาตให้ดูซอร์สโค้ดของระบบ");
+          return false;
+        }
+
+        // Ctrl+S / Cmd+S (Save Webpage)
+        if (cmdOrCtrl && key === 'S') {
+          e.preventDefault();
+          e.stopPropagation();
+          showSecurityToast("ไม่อนุญาตให้บันทึกหน้าเว็บ");
+          return false;
+        }
+      }, true);
+
+      // 3. Prevent Dragging of Images / Logos
+      document.addEventListener('dragstart', function(e) {
+        if (e.target && e.target.tagName === 'IMG') {
+          e.preventDefault();
+        }
+      });
+
+      // 4. DevTools Open Detection (Window Dimensions Threshold)
+      const threshold = 160;
+      function checkDevTools() {
+        const widthDiff = window.outerWidth - window.innerWidth > threshold;
+        const heightDiff = window.outerHeight - window.innerHeight > threshold;
+        const isDockedDevTools = widthDiff || heightDiff || urlParams.get("testShield") === "1";
+
+        const overlay = document.getElementById("securityShieldOverlay");
+        if (overlay) {
+          if (isDockedDevTools) {
+            if (!overlay.classList.contains("active")) {
+              overlay.classList.add("active");
+            }
+          } else {
+            if (overlay.classList.contains("active")) {
+              overlay.classList.remove("active");
+            }
+          }
+        }
+      }
+      window.addEventListener('resize', checkDevTools);
+      setInterval(checkDevTools, 1200);
+
+      // 5. Console Protection & Warning Banner
+      try {
+        console.clear();
+        console.log("%c⛔ คำเตือนด้านความปลอดภัยและทรัพย์สินทางปัญญา (SECURITY NOTICE)", "background: #b91c1c; color: #ffffff; font-size: 15px; font-weight: bold; padding: 6px 12px; border-radius: 6px;");
+        console.log("%cระบบรายงานข้อมูลชุดตรวจดิน (ReportTestKit) พัฒนาขึ้นสำหรับสำนักวิทยาศาสตร์เพื่อการพัฒนาที่ดิน ห้ามคัดลอก ดัดแปลง หรือนำซอร์สโค้ดไปใช้โดยไม่ได้รับอนุญาตตามกฎหมาย", "color: #b91c1c; font-size: 12px; font-weight: bold; margin-top: 4px;");
+
+        // Suppress console outputs in production so internal APIs and data structures are protected
+        const _noop = function() {};
+        console.log = _noop;
+        console.debug = _noop;
+        console.info = _noop;
+        console.table = _noop;
+      } catch (err) {}
+    })();
+
     // -----------------------------------------------------------------------
     // CONFIGURATION & STATE
     // -----------------------------------------------------------------------
@@ -1506,11 +1761,68 @@
       applyFilters();
     }
 
+    // Floating Executive Filter Bar Scroll Tracker
+    function initStickyFilterScrollTracker() {
+      const card = document.getElementById("executiveFiltersCard");
+      if (!card) return;
+      const onScroll = () => {
+        const threshold = window.innerWidth >= 1024 ? 68 : 104;
+        const rect = card.getBoundingClientRect();
+        if (rect.top <= threshold + 2) {
+          card.classList.add("is-floating");
+        } else {
+          card.classList.remove("is-floating");
+        }
+      };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll, { passive: true });
+      onScroll();
+    }
+
     // -----------------------------------------------------------------------
     // INITIALIZATION
     // -----------------------------------------------------------------------
     document.addEventListener("DOMContentLoaded", () => {
       initAuth();
+      updateFilterPillsSummary();
+      initStickyFilterScrollTracker();
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const testScroll = urlParams.get("testScroll");
+      if (testScroll) {
+        setTimeout(() => {
+          window.scrollTo(0, parseInt(testScroll, 10));
+        }, 150);
+      }
+
+      const testYear = urlParams.get("testYear");
+      const testRegion = urlParams.get("testRegion");
+      const testCollapse = urlParams.get("testCollapse");
+      if (testYear || testRegion || testCollapse) {
+        setTimeout(() => {
+          if (testYear) {
+            const yr = document.getElementById("filterYear");
+            if (yr) yr.value = testYear;
+          }
+          if (testRegion) {
+            const reg = document.getElementById("filterRegion");
+            if (reg) {
+              reg.value = testRegion;
+              if (typeof onRegionChange === 'function') onRegionChange();
+            }
+          }
+          applyFilters();
+          if (testCollapse === "1" && !isFiltersCollapsed) {
+            toggleFiltersCollapse();
+          }
+        }, 800);
+      }
+
+      const tabParam = urlParams.get("tab") || (window.location.hash ? window.location.hash.replace("#", "") : null);
+      if (tabParam && (tabParam === "table" || tabParam === "dashboard")) {
+        setTimeout(() => switchTab(tabParam), 350);
+      }
+
       // Hydrate instantly from local cache if available (0ms first paint)
       const cached = localStorage.getItem("report_testkit_cached_data");
       if (cached) {
@@ -1538,11 +1850,11 @@
       const btnSamples = document.getElementById("btnViewSamples");
 
       if (mode === 'samples') {
-        btnSamples.className = "px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center gap-1.5 bg-emerald-600 text-white shadow-sm";
-        btnKits.className = "px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+        btnSamples.className = "flex-1 sm:flex-initial px-2.5 sm:px-3.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 sm:gap-2 bg-emerald-600 text-white shadow-sm cursor-pointer";
+        btnKits.className = "flex-1 sm:flex-initial px-2.5 sm:px-3.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 sm:gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer";
       } else {
-        btnKits.className = "px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center gap-1.5 bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-300 shadow-sm";
-        btnSamples.className = "px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+        btnKits.className = "flex-1 sm:flex-initial px-2.5 sm:px-3.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 sm:gap-2 bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-300 shadow-sm cursor-pointer";
+        btnSamples.className = "flex-1 sm:flex-initial px-2.5 sm:px-3.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 sm:gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer";
       }
 
       updateKpiHeadersAndLabels();
@@ -1553,15 +1865,17 @@
     function updateKpiHeadersAndLabels() {
       const isSamples = currentViewMode === 'samples';
 
-      document.getElementById("kpiTitleCard1").innerText = isSamples ? "จำนวนตัวอย่างที่วิเคราะห์ได้ (จาก Testkits)" : "ยอดแจกชุดตรวจดินรวม (Testkits)";
-      document.getElementById("kpiUnitCard1").innerText = isSamples ? "ตัวอย่างดินที่รองรับได้" : "ชุด (pH, NPK, EC)";
+      document.getElementById("kpiTitleCard1").innerText = isSamples ? "จำนวนตัวอย่างที่สามารถวิเคราะห์ได้ (จาก Testkits)" : "ยอดแจกชุดตรวจดิน (Testkits)";
       document.getElementById("kpiIconCard1").className = isSamples ? "fa-solid fa-microscope" : "fa-solid fa-box-open";
 
-      document.getElementById("kpiTitleCard2").innerText = isSamples ? "จำนวนตัวอย่างที่วิเคราะห์ได้ (จาก Refills)" : "ยอดแจกชุดน้ำยาเติมรวม (Refills)";
-      document.getElementById("kpiUnitCard2").innerText = isSamples ? "ตัวอย่างดินที่รองรับได้" : "ชุดน้ำยาเติมสารเคมี";
+      document.getElementById("kpiTitleCard2").innerText = isSamples ? "จำนวนตัวอย่างที่สามารถวิเคราะห์ได้ (จาก Refills)" : "ยอดแจกชุดน้ำยาเติม (Refills)";
       document.getElementById("kpiIconCard2").className = isSamples ? "fa-solid fa-vial-virus" : "fa-solid fa-bottle-droplet";
 
-      document.getElementById("kpiTitleCard3").innerText = isSamples ? "จำนวนตัวอย่างที่วิเคราะห์ได้สะสมรวมทั้งหมด" : "ยอดแจกจ่ายสะสมทั้งหมด (Grand Total)";
+      document.querySelectorAll(".kpi-unit-tag1, .kpi-unit-tag2").forEach(el => {
+        el.innerText = isSamples ? "ตัวอย่าง" : "ชุด";
+      });
+
+      document.getElementById("kpiTitleCard3").innerText = isSamples ? "จำนวนตัวอย่างที่สามารถวิเคราะห์ได้สะสมรวมทั้งหมด" : "ยอดแจกจ่ายสะสมทั้งหมด (Grand Total)";
       document.getElementById("kpiUnitCard3").innerText = isSamples ? "รวมทุกชุดตรวจและชุดเติมสารเคมี" : "ชุดตรวจและชุดเติมรวมกัน";
 
       document.getElementById("ratioLabelTestkit").innerHTML = isSamples ? `จากชุดตรวจ: <b id="testkitRatio">0%</b>` : `ชุดตรวจ: <b id="testkitRatio">0%</b>`;
@@ -1569,33 +1883,33 @@
 
       if (document.getElementById("chartYearlyTitle")) {
         document.getElementById("chartYearlyTitle").innerHTML = `<i class="fa-solid fa-chart-line text-blue-600"></i> ` +
-          (isSamples ? "แนวโน้มและเปรียบเทียบจำนวนตัวอย่างที่วิเคราะห์ได้รายปีงบประมาณ" : "แนวโน้มและเปรียบเทียบยอดการจัดสรรชุดตรวจสอบดินรายปีงบประมาณ");
+          (isSamples ? "แนวโน้มและเปรียบเทียบจำนวนตัวอย่างที่สามารถวิเคราะห์ได้รายปีงบประมาณ" : "แนวโน้มและเปรียบเทียบยอดการจัดสรรชุดตรวจสอบดินรายปีงบประมาณ");
       }
       if (document.getElementById("chartYearlySubtitle")) {
         document.getElementById("chartYearlySubtitle").innerText = isSamples
-          ? "เปรียบเทียบศักยภาพการตรวจวิเคราะห์ตัวอย่างดินแยกตามประเภทชุดตรวจและชุดเติมสารเคมีในแต่ละปีงบประมาณ"
+          ? "เปรียบเทียบจำนวนตัวอย่างที่สามารถวิเคราะห์ได้แยกตามประเภทชุดตรวจและชุดเติมสารเคมีในแต่ละปีงบประมาณ"
           : "เปรียบเทียบจำนวนการจัดสรรชุดตรวจดิน (Testkits) และชุดน้ำยาเติม (Refills) ทุกประเภทแยกตามปีงบประมาณ";
       }
 
       document.getElementById("chartRegionTitle").innerHTML = `<i class="fa-solid fa-chart-column text-blue-600"></i> ` + 
-        (isSamples ? "จำนวนตัวอย่างที่วิเคราะห์ได้เปรียบเทียบตามเขต (สพข. 1 - 12)" : "ยอดแจกจ่ายเปรียบเทียบตามสำนักงานพัฒนาที่ดินเขต (สพข. 1 - 12)");
+        (isSamples ? "จำนวนตัวอย่างที่สามารถวิเคราะห์ได้เปรียบเทียบตามเขต (สพข. 1 - 12)" : "ยอดแจกจ่ายเปรียบเทียบตามสำนักงานพัฒนาที่ดินเขต (สพข. 1 - 12)");
       document.getElementById("chartRegionSubtitle").innerText = isSamples 
         ? "เปรียบเทียบจำนวนตัวอย่างดินที่สามารถตรวจได้จากชุดตรวจดิน (Testkits) vs ชุดน้ำยาเติม (Refills)" 
         : "เปรียบเทียบระหว่างชุดตรวจสอบดิน (Testkits) และชุดน้ำยาเติม (Refills) ในแต่ละเขต";
 
       document.getElementById("chartTopTitle").innerHTML = `<i class="fa-solid fa-trophy text-amber-500"></i> ` + 
-        (isSamples ? "10 อันดับจังหวัดที่มีจำนวนตัวอย่างที่วิเคราะห์ได้สูงสุด" : "10 อันดับจังหวัดที่ได้รับการจัดสรรสูงสุด (Top 10 Provinces)");
+        (isSamples ? "10 อันดับจังหวัดที่มีจำนวนตัวอย่างที่สามารถวิเคราะห์ได้สูงสุด" : "10 อันดับจังหวัดที่ได้รับการจัดสรรสูงสุด (Top 10 Provinces)");
       document.getElementById("chartTopSubtitle").innerText = isSamples 
         ? "จัดอันดับตามจำนวนตัวอย่างดินที่สามารถให้บริการตรวจวิเคราะห์ได้จริง (ตัวอย่าง)" 
         : "จัดอันดับตามยอดรวมการแจกจ่ายชุดตรวจและชุดเติมทุกประเภท";
 
       if (document.getElementById("chartProjectTitle")) {
         document.getElementById("chartProjectTitle").innerHTML = `<i class="fa-solid fa-diagram-project text-indigo-600"></i> ` + 
-          (isSamples ? "สัดส่วนจำนวนตัวอย่างที่วิเคราะห์ได้แยกตามโครงการ" : "สัดส่วนการจัดสรรแยกตามโครงการ");
+          (isSamples ? "สัดส่วนจำนวนตัวอย่างที่สามารถวิเคราะห์ได้แยกตามโครงการ" : "สัดส่วนการจัดสรรแยกตามโครงการ");
       }
       if (document.getElementById("chartProjectSubtitle")) {
         document.getElementById("chartProjectSubtitle").innerText = isSamples 
-          ? "เปรียบเทียบสัดส่วนศักยภาพการตรวจวิเคราะห์ตัวอย่างดินตามแผนงานโครงการ" 
+          ? "เปรียบเทียบสัดส่วนจำนวนตัวอย่างที่สามารถวิเคราะห์ได้ตามแผนงานโครงการ" 
           : "เปรียบเทียบสัดส่วนยอดการจัดสรรตามแผนงานโครงการ";
       }
     }
@@ -1724,8 +2038,8 @@
 
       if (status === 'loading') {
         if (desktopBadge) {
-          desktopBadge.className = "hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-amber-500/20 border border-amber-400/30 text-amber-300 text-xs font-medium";
-          desktopBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span><span>กำลังเชื่อมต่อฐานข้อมูล...</span>`;
+          desktopBadge.className = "hidden sm:flex items-center space-x-2 h-9 px-3 rounded-xl bg-slate-900/35 backdrop-blur-md border border-amber-400/30 text-amber-300 text-xs font-medium shadow-sm transition";
+          desktopBadge.innerHTML = `<span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-amber-400"></span></span><span>กำลังเชื่อมต่อฐานข้อมูล...</span>`;
         }
         if (mobileBadge) {
           mobileBadge.className = "sm:hidden flex items-center justify-between px-3 py-2 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs";
@@ -1738,8 +2052,8 @@
       } else if (status === 'connected') {
         const countStr = count !== undefined ? `(${formatNumber(count)} รายการ)` : "";
         if (desktopBadge) {
-          desktopBadge.className = "hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-medium";
-          desktopBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>เชื่อมต่อฐานข้อมูลสำเร็จ</span>`;
+          desktopBadge.className = "hidden sm:flex items-center space-x-2 h-9 px-3 rounded-xl bg-slate-900/35 backdrop-blur-md border border-emerald-400/30 text-emerald-300 text-xs font-medium shadow-sm transition";
+          desktopBadge.innerHTML = `<span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-40"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span></span><span>เชื่อมต่อฐานข้อมูลสำเร็จ</span>`;
         }
         if (mobileBadge) {
           mobileBadge.className = "sm:hidden flex items-center justify-between px-3 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs";
@@ -1752,7 +2066,7 @@
         }
       } else if (status === 'error') {
         if (desktopBadge) {
-          desktopBadge.className = "hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-rose-500/20 border border-rose-400/30 text-rose-300 text-xs font-medium";
+          desktopBadge.className = "hidden sm:flex items-center space-x-2 h-9 px-3 rounded-xl bg-slate-900/35 backdrop-blur-md border border-rose-400/30 text-rose-300 text-xs font-medium shadow-sm transition";
           desktopBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-400"></span><span>การเชื่อมต่อขัดข้อง</span>`;
         }
         if (mobileBadge) {
@@ -1978,7 +2292,24 @@
 
     function onDataLoaded() {
       populateFilterDropdowns();
+      const urlParams = new URLSearchParams(window.location.search);
+      const testYear = urlParams.get("testYear");
+      const testRegion = urlParams.get("testRegion");
+      if (testYear && document.getElementById("filterYear")) {
+        document.getElementById("filterYear").value = testYear;
+      }
+      if (testRegion && document.getElementById("filterRegion")) {
+        document.getElementById("filterRegion").value = testRegion;
+        if (typeof onRegionChange === 'function') onRegionChange();
+      }
       applyFilters();
+      if (urlParams.get("testCollapse") === "1" && !isFiltersCollapsed) {
+        toggleFiltersCollapse();
+      }
+      if (urlParams.get("mode") === "samples" && currentViewMode !== "samples") {
+        setViewMode("samples");
+      }
+      window.__DATA_LOADED__ = true;
     }
 
     // -----------------------------------------------------------------------
@@ -2067,17 +2398,20 @@
       const iconMobile = document.getElementById("toggleFiltersIconMobile");
       const iconDesktop = document.getElementById("toggleFiltersIconDesktop");
       const textDesktop = document.getElementById("toggleFiltersTextDesktop");
+      const textMobile = document.getElementById("toggleFiltersTextMobile");
 
       if (isFiltersCollapsed) {
-        grid.classList.add("hidden");
-        if (iconMobile) iconMobile.className = "fa-solid fa-chevron-down";
-        if (iconDesktop) iconDesktop.className = "fa-solid fa-chevron-down text-[10px]";
+        if (grid) grid.classList.add("hidden");
+        if (iconMobile) iconMobile.className = "fa-solid fa-chevron-down text-[10px]";
+        if (iconDesktop) iconDesktop.className = "fa-solid fa-chevron-down text-[10px] text-amber-500";
         if (textDesktop) textDesktop.innerText = "ขยายตัวกรอง";
+        if (textMobile) textMobile.innerText = "ขยาย";
       } else {
-        grid.classList.remove("hidden");
-        if (iconMobile) iconMobile.className = "fa-solid fa-chevron-up";
-        if (iconDesktop) iconDesktop.className = "fa-solid fa-chevron-up text-[10px]";
+        if (grid) grid.classList.remove("hidden");
+        if (iconMobile) iconMobile.className = "fa-solid fa-chevron-up text-[10px]";
+        if (iconDesktop) iconDesktop.className = "fa-solid fa-chevron-up text-[10px] text-amber-500";
         if (textDesktop) textDesktop.innerText = "ย่อตัวกรอง";
+        if (textMobile) textMobile.innerText = "ย่อ";
       }
     }
 
@@ -2093,28 +2427,89 @@
       const container = document.getElementById("filterActivePills");
       if (!container) return;
 
-      const pillYear = year === "ALL" ? "ทุกปี" : `ปี ${year}`;
-      const pillProject = project === "ALL" ? "" : project;
-      const pillReg = region === "ALL" ? "ทุกเขต" : region;
-      const pillProv = prov === "ALL" ? "ทุกจังหวัด" : prov;
-      const pillStation = station === "ALL" ? "" : station;
+      let activeCount = 0;
+      if (year !== "ALL") activeCount++;
+      if (project !== "ALL") activeCount++;
+      if (region !== "ALL") activeCount++;
+      if (prov !== "ALL") activeCount++;
+      if (station !== "ALL") activeCount++;
+      if (dateFromVal || dateToVal) activeCount++;
 
-      let datePill = "";
+      // Active Filter Count Badge
+      const badgeCount = document.getElementById("activeFiltersBadgeCount");
+      const btnClear = document.getElementById("btnClearActivePills");
+      if (badgeCount) {
+        if (activeCount > 0) {
+          badgeCount.classList.remove("hidden");
+          badgeCount.innerHTML = `<span class="hidden sm:inline">กรองอยู่ </span>${activeCount}<span class="hidden sm:inline"> เงื่อนไข</span>`;
+        } else {
+          badgeCount.classList.add("hidden");
+        }
+      }
+      if (btnClear) {
+        if (activeCount > 0) {
+          btnClear.classList.remove("hidden");
+        } else {
+          btnClear.classList.add("hidden");
+        }
+      }
+
+      // 1. Year Pill
+      let pillYearHtml = '';
+      if (year !== "ALL") {
+        pillYearHtml = `<span class="px-2 py-0.5 rounded-md bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 font-bold border border-blue-300 dark:border-blue-700 text-[10.5px] shadow-xs flex items-center gap-1"><i class="fa-regular fa-calendar-check text-blue-600 dark:text-blue-400 text-[9.5px]"></i>ปี ${escapeHtml(year)}</span>`;
+      } else {
+        pillYearHtml = `<span class="px-1.5 py-0.5 rounded-md bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium text-[10.5px]"><i class="fa-regular fa-calendar mr-0.5 text-slate-400 text-[9.5px]"></i>ทุกปีงบฯ</span>`;
+      }
+
+      // 2. Project Pill
+      let pillProjectHtml = '';
+      if (project !== "ALL") {
+        pillProjectHtml = `<span class="px-2 py-0.5 rounded-md bg-indigo-100 dark:bg-indigo-900/50 text-indigo-800 dark:text-indigo-200 font-bold border border-indigo-300 dark:border-indigo-700 text-[10.5px] shadow-xs flex items-center gap-1 max-w-[200px] truncate" title="${escapeHtml(project)}"><i class="fa-solid fa-diagram-project text-indigo-600 dark:text-indigo-400 text-[9.5px]"></i>${escapeHtml(project)}</span>`;
+      }
+
+      // 3. Region Pill
+      let pillRegHtml = '';
+      if (region !== "ALL") {
+        pillRegHtml = `<span class="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-200 font-bold border border-emerald-300 dark:border-emerald-700 text-[10.5px] shadow-xs flex items-center gap-1"><i class="fa-solid fa-map-pin text-emerald-600 dark:text-emerald-400 text-[9.5px]"></i>${escapeHtml(region)}</span>`;
+      } else {
+        pillRegHtml = `<span class="px-1.5 py-0.5 rounded-md bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium text-[10.5px]"><i class="fa-solid fa-map-location-dot mr-0.5 text-slate-400 text-[9.5px]"></i>ทุกเขต (1-12)</span>`;
+      }
+
+      // 4. Province Pill
+      let pillProvHtml = '';
+      if (prov !== "ALL") {
+        pillProvHtml = `<span class="px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-200 font-bold border border-amber-300 dark:border-amber-700 text-[10.5px] shadow-xs flex items-center gap-1"><i class="fa-solid fa-location-dot text-amber-600 dark:text-amber-400 text-[9.5px]"></i>${escapeHtml(prov)}</span>`;
+      } else {
+        pillProvHtml = `<span class="px-1.5 py-0.5 rounded-md bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium text-[10.5px]"><i class="fa-solid fa-city mr-0.5 text-slate-400 text-[9.5px]"></i>ทุกจังหวัด</span>`;
+      }
+
+      // 5. Station Pill
+      let pillStationHtml = '';
+      if (station !== "ALL") {
+        pillStationHtml = `<span class="px-2 py-0.5 rounded-md bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200 font-bold border border-purple-300 dark:border-purple-700 text-[10.5px] shadow-xs flex items-center gap-1 max-w-[180px] truncate" title="${escapeHtml(station)}"><i class="fa-solid fa-building-flag text-purple-600 dark:text-purple-400 text-[9.5px]"></i>${escapeHtml(station)}</span>`;
+      }
+
+      // 6. Import Date Pill (Col B)
+      let pillDateHtml = '';
       if (dateFromVal || dateToVal) {
         const fromStr = dateFromVal ? formatIsoToThaiDate(dateFromVal) : "...";
         const toStr = dateToVal ? formatIsoToThaiDate(dateToVal) : "...";
-        datePill = `<span class="px-2 py-0.5 rounded-md bg-teal-100 dark:bg-teal-900/40 text-teal-800 dark:text-teal-300 font-medium"><i class="fa-regular fa-calendar-check mr-1"></i>ส่งมอบ: ${escapeHtml(fromStr)} ถึง ${escapeHtml(toStr)}</span>`;
+        pillDateHtml = `<span class="px-2 py-0.5 rounded-md bg-teal-100 dark:bg-teal-900/50 text-teal-800 dark:text-teal-200 font-bold border border-teal-300 dark:border-teal-700 text-[10.5px] shadow-xs flex items-center gap-1"><i class="fa-solid fa-calendar-plus text-teal-600 dark:text-teal-400 text-[9.5px]"></i>วันที่นำเข้า: ${escapeHtml(fromStr)} ถึง ${escapeHtml(toStr)}</span>`;
       }
 
+      // 7. Results Count Pill
+      const countHtml = `<span class="px-2 py-0.5 rounded-md bg-slate-800 text-amber-300 dark:bg-slate-950 dark:text-amber-400 font-mono font-bold text-[10.5px] shadow-xs flex items-center gap-1"><i class="fa-solid fa-database text-[9px]"></i>พบ ${formatNumber(filteredData ? filteredData.length : 0)} รายการ</span>`;
+
       container.innerHTML = `
-        <div class="flex items-center gap-1.5 flex-wrap text-[11px] ml-1">
-          <span class="px-2 py-0.5 rounded-md bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 font-medium">${escapeHtml(pillYear)}</span>
-          ${pillProject ? `<span class="px-2 py-0.5 rounded-md bg-indigo-100 dark:bg-indigo-900/40 text-indigo-800 dark:text-indigo-300 font-medium truncate max-w-[220px]" title="${escapeHtml(pillProject)}"><i class="fa-solid fa-diagram-project mr-1"></i>${escapeHtml(pillProject)}</span>` : ''}
-          <span class="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 font-medium">${escapeHtml(pillReg)}</span>
-          <span class="px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 font-medium">${escapeHtml(pillProv)}</span>
-          ${pillStation ? `<span class="px-2 py-0.5 rounded-md bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 font-medium">${escapeHtml(pillStation)}</span>` : ''}
-          ${datePill}
-          <span class="text-slate-400 font-mono text-[10px]">(${formatNumber(filteredData.length)} รายการ)</span>
+        <div class="flex items-center gap-1 flex-wrap text-[10.5px]">
+          ${pillYearHtml}
+          ${pillProjectHtml}
+          ${pillRegHtml}
+          ${pillProvHtml}
+          ${pillStationHtml}
+          ${pillDateHtml}
+          ${countHtml}
         </div>
       `;
     }
@@ -2137,7 +2532,7 @@
         if (prov !== "ALL" && String(row.province) !== prov) return false;
         if (station !== "ALL" && String(row.station) !== station) return false;
         if (tsFrom || tsTo) {
-          const rowTs = parseDateToTimestamp(row.deliveryDate);
+          const rowTs = parseDateToTimestamp(row.importDate || row.deliveryDate);
           if (!rowTs) return false;
           if (tsFrom && rowTs < tsFrom) return false;
           if (tsTo && rowTs > tsTo) return false;
@@ -2220,28 +2615,29 @@
         valCard3 = valCard1 + valCard2;
       }
 
-      animateCount("statTotalTestkit", valCard1);
-      animateCount("statTotalRefill", valCard2);
-      animateCount("statGrandTotal", valCard3);
-      
-      document.getElementById("statPhTestkit").innerText = formatNumber(subPhTest);
-      document.getElementById("statNpkTestkit").innerText = formatNumber(subNpkTest);
-      document.getElementById("statEcTestkit").innerText = formatNumber(subEcTest);
+      // Animate rolling numbers for pH, NPK, EC in Card 1 & Card 2
+      animateCount("statPhTestkit", subPhTest);
+      animateCount("statNpkTestkit", subNpkTest);
+      animateCount("statEcTestkit", subEcTest);
 
-      document.getElementById("statPhRefill").innerText = formatNumber(subPhRef);
-      document.getElementById("statNpkRefill").innerText = formatNumber(subNpkRef);
-      document.getElementById("statEcRefill").innerText = formatNumber(subEcRef);
+      animateCount("statPhRefill", subPhRef);
+      animateCount("statNpkRefill", subNpkRef);
+      animateCount("statEcRefill", subEcRef);
+
+      // Card 3: Grand Total
+      animateCount("statGrandTotal", valCard3);
 
       const testkitPct = valCard3 > 0 ? Math.round((valCard1 / valCard3) * 100) : 0;
       const refillPct = valCard3 > 0 ? (100 - testkitPct) : 0;
-      document.getElementById("testkitRatio").innerText = testkitPct + "%";
-      document.getElementById("refillRatio").innerText = refillPct + "%";
+      animateCount("testkitRatio", testkitPct, "%");
+      animateCount("refillRatio", refillPct, "%");
       document.getElementById("ratioBarTestkit").style.width = testkitPct + "%";
       document.getElementById("ratioBarRefill").style.width = refillPct + "%";
 
-      document.getElementById("statCoverage").innerText = `${regionsSet.size} เขต`;
-      document.getElementById("statProvincesCovered").innerText = `${provincesSet.size} จังหวัด`;
-      document.getElementById("statStationsCovered").innerText = `${stationsSet.size} สถานี`;
+      // Card 4: Coverage & Capacity
+      animateCount("statCoverage", regionsSet.size, " เขต");
+      animateCount("statProvincesCovered", provincesSet.size, " จังหวัด");
+      animateCount("statStationsCovered", stationsSet.size, " สถานี");
     }
 
     // -----------------------------------------------------------------------
@@ -2534,13 +2930,13 @@
           labels: regionLabels,
           datasets: [
             {
-              label: isSamples ? 'ศักยภาพจากชุดตรวจ (ตัวอย่าง)' : 'ชุดตรวจสอบดิน (Testkits)',
+              label: isSamples ? 'จำนวนตัวอย่างที่วิเคราะห์ได้ (จากชุดตรวจ)' : 'ชุดตรวจสอบดิน (Testkits)',
               data: regionTestkitData,
               backgroundColor: '#2563eb',
               borderRadius: 6
             },
             {
-              label: isSamples ? 'ศักยภาพจากชุดเติม (ตัวอย่าง)' : 'ชุดน้ำยาเติม (Refills)',
+              label: isSamples ? 'จำนวนตัวอย่างที่วิเคราะห์ได้ (จากชุดเติม)' : 'ชุดน้ำยาเติม (Refills)',
               data: regionRefillData,
               backgroundColor: '#10b981',
               borderRadius: 6
@@ -2731,7 +3127,7 @@
         data: {
           labels: topProvLabels,
           datasets: [{
-            label: isSamples ? 'ศักยภาพตัวอย่างดิน (ตัวอย่าง)' : 'ยอดจัดสรรรวมทั้งหมด (ชุด)',
+            label: isSamples ? 'จำนวนตัวอย่างที่สามารถวิเคราะห์ได้ (ตัวอย่าง)' : 'ยอดจัดสรรรวมทั้งหมด (ชุด)',
             data: topProvValues,
             backgroundColor: isSamples ? '#10b981' : '#8b5cf6',
             borderRadius: 6
@@ -2745,7 +3141,7 @@
             legend: { display: false },
             tooltip: {
               callbacks: {
-                label: (c) => ` ${isSamples ? 'ศักยภาพตัวอย่างดิน' : 'ยอดจัดสรรรวม'}: ${formatNumber(c.raw)} ${unitLabel}`
+                label: (c) => ` ${isSamples ? 'จำนวนตัวอย่างที่สามารถวิเคราะห์ได้' : 'ยอดจัดสรรรวม'}: ${formatNumber(c.raw)} ${unitLabel}`
               }
             },
             barValueLabels: {
@@ -3402,24 +3798,24 @@
       const container = document.getElementById("userAuthContainer");
       if (!currentUser) {
         container.innerHTML = `
-          <button onclick="openLoginModal()" class="flex items-center space-x-1.5 bg-amber-400 hover:bg-amber-500 text-slate-900 font-semibold px-2.5 sm:px-3 py-2 rounded-lg text-xs transition shadow-sm">
-            <i class="fa-solid fa-lock"></i>
+          <button onclick="openLoginModal()" class="h-9 flex items-center space-x-1.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-900 font-semibold px-3 sm:px-3.5 rounded-xl text-xs transition shadow-md shadow-amber-500/20 active:scale-95 cursor-pointer">
+            <i class="fa-solid fa-lock text-[11px]"></i>
             <span class="hidden sm:inline">เข้าสู่ระบบ</span>
           </button>
         `;
       } else {
-        const roleLabel = currentUser.permissions === 'admin' ? 'ผู้ดูแลระบบ (Admin)' : 'เจ้าหน้าที่ (User)';
-        const roleBg = currentUser.permissions === 'admin' ? 'bg-rose-500 text-white' : 'bg-emerald-500 text-white';
+        const roleLabel = currentUser.permissions === 'admin' ? 'Admin' : 'User';
+        const roleBg = currentUser.permissions === 'admin' ? 'bg-rose-500/30 text-rose-200 border border-rose-400/40' : 'bg-emerald-500/30 text-emerald-200 border border-emerald-400/40';
         container.innerHTML = `
-          <div class="flex items-center space-x-2 bg-white/10 px-2.5 py-1 rounded-lg border border-white/20 text-xs">
-            <div class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center font-bold">
+          <div class="h-9 flex items-center space-x-2 bg-slate-900/35 backdrop-blur-md px-2.5 sm:px-3 rounded-xl border border-white/20 text-xs shadow-sm">
+            <div class="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center font-bold text-amber-300">
               <i class="fa-solid fa-user text-[11px]"></i>
             </div>
             <div class="text-left hidden sm:block">
-              <div class="font-bold text-white leading-none">${escapeHtml(currentUser.user)}</div>
+              <div class="font-bold text-white leading-none text-xs">${escapeHtml(currentUser.user)}</div>
               <span class="text-[9px] px-1.5 py-0.2 rounded ${roleBg} uppercase tracking-wider font-semibold">${roleLabel}</span>
             </div>
-            <button onclick="logout()" title="ออกจากระบบ" class="text-white/70 hover:text-white ml-1 text-xs">
+            <button onclick="logout()" title="ออกจากระบบ" class="text-white/60 hover:text-rose-300 ml-1 text-xs transition p-1 cursor-pointer">
               <i class="fa-solid fa-right-from-bracket"></i>
             </button>
           </div>
@@ -4018,7 +4414,7 @@
                 <th>NPK Refill</th>
                 <th>EC Refill</th>
                 <th class="bg-slate-200/70">รวมชุด</th>
-                <th class="bg-emerald-100/70 text-emerald-900">จำนวนตัวอย่างที่วิเคราะห์ได้ (ตัวอย่าง)</th>
+                <th class="bg-emerald-100/70 text-emerald-900">จำนวนตัวอย่างที่สามารถวิเคราะห์ได้</th>
                 <th>สัดส่วน</th>
               </tr>
             </thead>
@@ -4450,16 +4846,30 @@
       document.getElementById("tabDashboard").classList.add("hidden");
       document.getElementById("tabTable").classList.add("hidden");
 
-      document.getElementById("tabBtnDashboard").className = "px-3 py-1.5 rounded-lg font-medium text-white/70 hover:text-white hover:bg-white/10 flex items-center space-x-1.5 transition text-xs";
-      document.getElementById("tabBtnTable").className = "px-3 py-1.5 rounded-lg font-medium text-white/70 hover:text-white hover:bg-white/10 flex items-center space-x-1.5 transition text-xs";
+      const dDash = document.getElementById("tabBtnDashboard");
+      const dTable = document.getElementById("tabBtnTable");
+      const mDash = document.getElementById("mobileTabBtnDashboard");
+      const mTable = document.getElementById("mobileTabBtnTable");
+
+      const dActive = "px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-2 transition duration-200 bg-white/20 text-white shadow-sm border border-white/15 cursor-pointer";
+      const dInactive = "px-3.5 py-1.5 rounded-xl text-xs font-medium flex items-center gap-2 transition duration-200 text-white/70 hover:text-white hover:bg-white/10 cursor-pointer";
+
+      const mActive = "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition bg-white/20 text-white shadow-sm cursor-pointer";
+      const mInactive = "px-3 py-1.5 rounded-lg text-xs font-medium flex items-center justify-center gap-1.5 transition text-white/70 hover:text-white cursor-pointer";
 
       if (tabId === "dashboard") {
         document.getElementById("tabDashboard").classList.remove("hidden");
-        document.getElementById("tabBtnDashboard").className = "px-3 py-1.5 rounded-lg font-medium text-white bg-white/20 flex items-center space-x-1.5 transition text-xs";
+        if (dDash) dDash.className = dActive;
+        if (dTable) dTable.className = dInactive;
+        if (mDash) mDash.className = mActive;
+        if (mTable) mTable.className = mInactive;
         renderCharts();
       } else if (tabId === "table") {
         document.getElementById("tabTable").classList.remove("hidden");
-        document.getElementById("tabBtnTable").className = "px-3 py-1.5 rounded-lg font-medium text-white bg-white/20 flex items-center space-x-1.5 transition text-xs";
+        if (dDash) dDash.className = dInactive;
+        if (dTable) dTable.className = dActive;
+        if (mDash) mDash.className = mInactive;
+        if (mTable) mTable.className = mActive;
         renderTable();
       }
     }
@@ -4488,25 +4898,45 @@
         .replace(/'/g, '&#039;');
     }
 
-    function animateCount(elementId, target) {
-      const el = document.getElementById(elementId);
+    function animateCount(elementId, target, suffix = '') {
+      const el = typeof elementId === 'string' ? document.getElementById(elementId) : elementId;
       if (!el) return;
-      const start = 0;
-      const duration = 700;
+
+      if (el._animId) {
+        cancelAnimationFrame(el._animId);
+        el._animId = null;
+      }
+
+      const start = (typeof el._currentVal === 'number') ? el._currentVal : 0;
+      const targetVal = Number(target) || 0;
+
+      if (start === targetVal) {
+        el.innerText = formatNumber(targetVal) + suffix;
+        el._currentVal = targetVal;
+        return;
+      }
+
+      const duration = 750;
       const startTime = performance.now();
 
       function update(now) {
         const elapsed = now - startTime;
         const progress = Math.min(elapsed / duration, 1);
-        const current = Math.floor(progress * (target - start) + start);
-        el.innerText = formatNumber(current);
+        // Easing: easeOutCubic (dynamic start, soft deceleration landing)
+        const ease = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(start + (targetVal - start) * ease);
+        el._currentVal = current;
+        el.innerText = formatNumber(current) + suffix;
+
         if (progress < 1) {
-          requestAnimationFrame(update);
+          el._animId = requestAnimationFrame(update);
         } else {
-          el.innerText = formatNumber(target);
+          el._currentVal = targetVal;
+          el.innerText = formatNumber(targetVal) + suffix;
+          el._animId = null;
         }
       }
-      requestAnimationFrame(update);
+      el._animId = requestAnimationFrame(update);
     }
   </script>
 
