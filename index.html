@@ -912,9 +912,6 @@
               <i class="fa-solid fa-chart-line text-blue-600"></i>
               <span id="chartYearlyTitle">ภาพรวมและแนวโน้มการจัดสรรเปรียบเทียบรายปีงบประมาณ (จำแนกตามประเภทชุดตรวจ)</span>
             </h3>
-            <p id="chartYearlySubtitle" class="text-xs" style="color: var(--text-muted);">
-              เปรียบเทียบยอดการจัดสรรและจำนวนตัวอย่างที่วิเคราะห์ได้ในแต่ละปีงบประมาณ (ปี 2565 - 2568) แยกตามประเภทชุดตรวจ โดยไม่ต้องฟิลเตอร์ทีละปี
-            </p>
           </div>
           <!-- Mini Yearly Summary Badges -->
           <div id="yearlySummaryBadges" class="flex items-center gap-1.5 flex-wrap text-xs">
@@ -985,7 +982,7 @@
               สัดส่วนประเภทชุดตรวจสอบดิน (Testkits)
             </h3>
             <p id="chartTypeSubtitle" class="text-xs mb-3" style="color: var(--text-muted);">
-              สัดส่วนการแจกจ่าย pH vs NPK vs EC Testkits
+              สัดส่วนการแจกจ่าย pH, NPK, EC Testkits
             </p>
           </div>
           <div class="relative h-60 w-full flex items-center justify-center">
@@ -1885,16 +1882,11 @@
         document.getElementById("chartYearlyTitle").innerHTML = `<i class="fa-solid fa-chart-line text-blue-600"></i> ` +
           (isSamples ? "แนวโน้มและเปรียบเทียบจำนวนตัวอย่างที่สามารถวิเคราะห์ได้รายปีงบประมาณ" : "แนวโน้มและเปรียบเทียบยอดการจัดสรรชุดตรวจสอบดินรายปีงบประมาณ");
       }
-      if (document.getElementById("chartYearlySubtitle")) {
-        document.getElementById("chartYearlySubtitle").innerText = isSamples
-          ? "เปรียบเทียบจำนวนตัวอย่างที่สามารถวิเคราะห์ได้แยกตามประเภทชุดตรวจและชุดเติมสารเคมีในแต่ละปีงบประมาณ"
-          : "เปรียบเทียบจำนวนการจัดสรรชุดตรวจดิน (Testkits) และชุดน้ำยาเติม (Refills) ทุกประเภทแยกตามปีงบประมาณ";
-      }
 
       document.getElementById("chartRegionTitle").innerHTML = `<i class="fa-solid fa-chart-column text-blue-600"></i> ` + 
         (isSamples ? "จำนวนตัวอย่างที่สามารถวิเคราะห์ได้เปรียบเทียบตามเขต (สพข. 1 - 12)" : "ยอดแจกจ่ายเปรียบเทียบตามสำนักงานพัฒนาที่ดินเขต (สพข. 1 - 12)");
       document.getElementById("chartRegionSubtitle").innerText = isSamples 
-        ? "เปรียบเทียบจำนวนตัวอย่างดินที่สามารถตรวจได้จากชุดตรวจดิน (Testkits) vs ชุดน้ำยาเติม (Refills)" 
+        ? "เปรียบเทียบจำนวนตัวอย่างดินที่สามารถตรวจได้จากชุดตรวจดิน (Testkits), ชุดน้ำยาเติม (Refills)" 
         : "เปรียบเทียบระหว่างชุดตรวจสอบดิน (Testkits) และชุดน้ำยาเติม (Refills) ในแต่ละเขต";
 
       document.getElementById("chartTopTitle").innerHTML = `<i class="fa-solid fa-trophy text-amber-500"></i> ` + 
