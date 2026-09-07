@@ -3204,6 +3204,7 @@
           maintainAspectRatio: false,
           interaction: {
             mode: 'index',
+            axis: 'y',
             intersect: false
           },
           plugins: {
@@ -3222,11 +3223,17 @@
             },
             tooltip: {
               callbacks: {
+                title: (items) => {
+                  if (!items || !items.length) return '';
+                  const rawLabel = items[0].label || '';
+                  const provName = rawLabel.startsWith('จ.') || rawLabel.startsWith('จังหวัด') ? rawLabel : ('จังหวัด' + rawLabel);
+                  return `📍 ${provName}`;
+                },
                 label: (c) => ` ${c.dataset.label}: ${formatNumber(c.raw)} ${unitLabel}`,
                 afterBody: (items) => {
                   if (!items || items.length < 2) return '';
                   const total = items.reduce((sum, item) => sum + (item.raw || 0), 0);
-                  return ` รวมทั้งหมด: ${formatNumber(total)} ${unitLabel}`;
+                  return ` รวมจัดสรรทั้งสิ้น: ${formatNumber(total)} ${unitLabel}`;
                 }
               }
             },
